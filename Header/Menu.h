@@ -21,7 +21,7 @@ void SingleSet()
         return;
     }
 
-    vector<Food> dishes;
+    Queue *queue = EmptyQueue();
     string line;
     getline(file, line);
 
@@ -49,7 +49,9 @@ void SingleSet()
         getline(ss, priceStr, ',');
         int id = stoi(idstr);
         double price = stod(priceStr);
-        dishes.push_back({id, name, price});
+        // add to queue for customer to order
+        Food food = {id, name, price};
+        enqueue(queue, food);
         setPosition(70, y);
         cout << YELLOW << "| " << RESET << ORANGE << id << RESET;
         setPosition(80, y);
@@ -62,44 +64,90 @@ void SingleSet()
     cout << YELLOW << "------------------------------------------------" << RESET << endl;
 
     string meal;
+    int order;
     double mealPrice = 0;
+    int idInputLine = y + 2;
     int id;
-    while (true)
+    bool ordered = false;
+    while (!ordered)
     {
-        setPosition(70, y + 2);
-        cout << YELLOW << "Choose your order (ID): " << RESET;
-        int order;
-        cin >> order;
-        bool found = false;
-        for (Food food : dishes)
+        int line = 0;
+        while (true)
         {
-            if (order == food.id)
+            setPosition(70, y + 2 + line);
+            cout << YELLOW << "Choose your order (ID): " << RESET;
+            idInputLine = y + 2 + line;
+            line++;
+            if (cin >> order)
             {
-                id = food.id;
-                meal = food.name;
-                mealPrice = food.price;
-                y = y + 2;
-                found = true;
-                break;
+                if (order == 0)
+                {
+                    return;
+                }
+                bool found = false;
+
+                Menu *current = queue->front;
+                while (current != nullptr)
+                {
+                    if (order == current->food.id)
+                    {
+                        id = current->food.id;
+                        meal = current->food.name;
+                        mealPrice = current->food.price;
+                        y = y + 2;
+                        found = true;
+                        ordered = true;
+                        break;
+                    }
+                    current = current->next;
+                }
+                if (!found)
+                {
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "This ID does not EXIST" << RESET << endl;
+                    line++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, y + 2 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
             }
         }
-        if (!found)
+    }
+    int quantity;
+    int line1 = 0;
+    while (true)
+    {
+        setPosition(70, idInputLine + 1 + line1);
+        cout << YELLOW << "Enter Quantity: " << RESET;
+        line1++;
+        if (cin >> quantity)
         {
-            setPosition(70, y + 3);
-            cout << RED << "This ID does not EXIST" << RESET << endl;
-            y = y + 2;
-            continue;
+            if (quantity == 0)
+            {
+                return;
+            }
+            break;
         }
         else
         {
-            break;
+            cin.clear();
+            cin.ignore(1000, '\n');
+            setPosition(70, idInputLine + 1 + line1);
+            cout << RED << "Please Enter number only!!" << RESET << endl;
+            line1++;
         }
     }
-    setPosition(70, y + 1);
-    cout << YELLOW << "Enter Quantity: " << RESET;
-    int quantity;
-    cin >> quantity;
-    setPosition(70, y + 2);
+
+    setPosition(70, idInputLine + 4);
     cout << YELLOW << "PRESS 1 to Confirm your Order OR PRESS 0 to Cancel your Order: ";
     int verify;
     cin >> verify;
@@ -109,23 +157,39 @@ void SingleSet()
         setPosition(70, y + 4);
         cout << GREEN << "Order Complete" << RESET << endl;
         Receipt receipt = {id, meal, mealPrice, quantity};
-        // pass into receipt header
         add_last(list, receipt);
         system("cls");
-        setPosition(70, 5);
-        cout << GREEN << "PRESS 1 To Make Another Order OR PRESS Any Number to Finish Your Order: " << RESET;
         int num;
-        cin >> num;
-        if (num == 1)
+        int line2 = 0;
+        while (true)
         {
-            printed = false;
-            return;
-        }
-        else
-        {
-            system("cls");
-            Display(list);
-            SaveHistory(list);
+            setPosition(70, 5 + line2);
+            cout << GREEN << "PRESS 1 To Make Another Order OR PRESS Any Number to Finish Your Order: " << RESET;
+            line2++;
+            if (cin >> num)
+            {
+                if (num == 1)
+                {
+                    return;
+                }
+                else
+                {
+                    system("cls");
+                    printing();
+                    system("cls");
+                    Display(list);
+                    SaveHistory(list);
+                    break;
+                }
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, 5 + line2);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line2++;
+            }
         }
     }
     else if (verify == 0)
@@ -148,7 +212,7 @@ void SignatureFood()
     {
         return;
     }
-    vector<Food> dishes;
+    Queue *queue = EmptyQueue();
     string line;
     getline(file, line);
     setPosition(85, 5);
@@ -175,7 +239,8 @@ void SignatureFood()
         getline(ss, priceStr, ',');
         int id = stoi(idstr);
         double price = stod(priceStr);
-        dishes.push_back({id, name, price});
+        Food food = {id, name, price};
+        enqueue(queue, food);
         setPosition(70, y);
         cout << YELLOW << "| " << RESET << ORANGE << id << RESET;
         setPosition(80, y);
@@ -188,45 +253,90 @@ void SignatureFood()
     cout << YELLOW << "----------------------------------------------------------" << RESET << endl;
 
     string meal;
+    int order;
     double mealPrice = 0;
+    int idInputLine = y + 2;
     int id;
-    while (true)
+    bool ordered = false;
+    while (!ordered)
     {
-        setPosition(70, y + 2);
-        cout << YELLOW << "Choose your order (ID): " << RESET;
-        int order;
-        cin >> order;
-        bool found = false;
-        for (Food food : dishes)
+        int line = 0;
+        while (true)
         {
-            if (order == food.id)
+            setPosition(70, y + 2 + line);
+            cout << YELLOW << "Choose your order (ID): " << RESET;
+            idInputLine = y + 2 + line;
+            line++;
+            if (cin >> order)
             {
-                id = food.id;
-                meal = food.name;
-                mealPrice = food.price;
-                y = y + 2;
-                found = true;
-                break;
+                if (order == 0)
+                {
+                    return;
+                }
+                bool found = false;
+
+                Menu *current = queue->front;
+                while (current != nullptr)
+                {
+                    if (order == current->food.id)
+                    {
+                        id = current->food.id;
+                        meal = current->food.name;
+                        mealPrice = current->food.price;
+                        y = y + 2;
+                        found = true;
+                        ordered = true;
+                        break;
+                    }
+                    current = current->next;
+                }
+                if (!found)
+                {
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "This ID does not EXIST" << RESET << endl;
+                    line++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, y + 2 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
             }
         }
-        if (!found)
+    }
+    int quantity;
+    int line1 = 0;
+    while (true)
+    {
+        setPosition(70, idInputLine + 1 + line1);
+        cout << YELLOW << "Enter Quantity: " << RESET;
+        line1++;
+        if (cin >> quantity)
         {
-            setPosition(70, y + 3);
-            cout << RED << "This ID does not EXIST" << RESET << endl;
-            y = y + 2;
-            continue;
+            if (quantity == 0)
+            {
+                return;
+            }
+            break;
         }
         else
         {
-            break;
+            cin.clear();
+            cin.ignore(1000, '\n');
+            setPosition(70, idInputLine + 1 + line1);
+            cout << RED << "Please Enter number only!!" << RESET << endl;
+            line1++;
         }
     }
 
-    setPosition(70, y + 1);
-    cout << YELLOW << "Enter Quantity: " << RESET;
-    int quantity;
-    cin >> quantity;
-    setPosition(70, y + 2);
+    setPosition(70, idInputLine + 4);
     cout << YELLOW << "PRESS 1 to Confirm your Order OR PRESS 0 to Cancel your Order: ";
     int verify;
     cin >> verify;
@@ -238,19 +348,37 @@ void SignatureFood()
         Receipt receipt = {id, meal, mealPrice, quantity};
         add_last(list, receipt);
         system("cls");
-        setPosition(70, 5);
-        cout << GREEN << "PRESS 1 To Make Another Order OR PRESS Any Number to Finish Your Order: " << RESET;
         int num;
-        cin >> num;
-        if (num == 1)
+        int line2 = 0;
+        while (true)
         {
-            return;
-        }
-        else
-        {
-            system("cls");
-            Display(list);
-            SaveHistory(list);
+            setPosition(70, 5 + line2);
+            cout << GREEN << "PRESS 1 To Make Another Order OR PRESS Any Number to Finish Your Order: " << RESET;
+            line2++;
+            if (cin >> num)
+            {
+                if (num == 1)
+                {
+                    return;
+                }
+                else
+                {
+                    system("cls");
+                    printing();
+                    system("cls");
+                    Display(list);
+                    SaveHistory(list);
+                    break;
+                }
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, 5 + line2);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line2++;
+            }
         }
     }
     else if (verify == 0)
@@ -273,7 +401,7 @@ void Fried()
     {
         return;
     }
-    vector<Food> dishes;
+    Queue *queue = EmptyQueue();
     string line;
     getline(file, line);
     setPosition(90, 5);
@@ -299,7 +427,9 @@ void Fried()
         getline(ss, priceStr, ',');
         int id = stoi(idstr);
         double price = stod(priceStr);
-        dishes.push_back({id, name, price});
+        // add to queue for customer to order
+        Food food = {id, name, price};
+        enqueue(queue, food);
         setPosition(70, y);
         cout << YELLOW << "| " << RESET << ORANGE << id << RESET;
         setPosition(80, y);
@@ -312,45 +442,90 @@ void Fried()
     cout << YELLOW << "---------------------------------------------------------------" << RESET << endl;
 
     string meal;
+    int order;
     double mealPrice = 0;
+    int idInputLine = y + 2;
     int id;
-    while (true)
+    bool ordered = false;
+    while (!ordered)
     {
-        setPosition(70, y + 2);
-        cout << YELLOW << "Choose your order (ID): " << RESET;
-        int order;
-        cin >> order;
-        bool found = false;
-        for (Food food : dishes)
+        int line = 0;
+        while (true)
         {
-            if (order == food.id)
+            setPosition(70, y + 2 + line);
+            cout << YELLOW << "Choose your order (ID): " << RESET;
+            idInputLine = y + 2 + line;
+            line++;
+            if (cin >> order)
             {
-                id = food.id;
-                meal = food.name;
-                mealPrice = food.price;
-                y = y + 2;
-                found = true;
-                break;
+                if (order == 0)
+                {
+                    return;
+                }
+                bool found = false;
+
+                Menu *current = queue->front;
+                while (current != nullptr)
+                {
+                    if (order == current->food.id)
+                    {
+                        id = current->food.id;
+                        meal = current->food.name;
+                        mealPrice = current->food.price;
+                        y = y + 2;
+                        found = true;
+                        ordered = true;
+                        break;
+                    }
+                    current = current->next;
+                }
+                if (!found)
+                {
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "This ID does not EXIST" << RESET << endl;
+                    line++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, y + 2 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
             }
         }
-        if (!found)
+    }
+    int quantity;
+    int line1 = 0;
+    while (true)
+    {
+        setPosition(70, idInputLine + 1 + line1);
+        cout << YELLOW << "Enter Quantity: " << RESET;
+        line1++;
+        if (cin >> quantity)
         {
-            setPosition(70, y + 3);
-            cout << RED << "This ID does not EXIST" << RESET << endl;
-            y = y + 2;
-            continue;
+            if (quantity == 0)
+            {
+                return;
+            }
+            break;
         }
         else
         {
-            break;
+            cin.clear();
+            cin.ignore(1000, '\n');
+            setPosition(70, idInputLine + 1 + line1);
+            cout << RED << "Please Enter number only!!" << RESET << endl;
+            line1++;
         }
     }
 
-    setPosition(70, y + 1);
-    cout << YELLOW << "Enter Quantity: " << RESET;
-    int quantity;
-    cin >> quantity;
-    setPosition(70, y + 2);
+    setPosition(70, idInputLine + 4);
     cout << YELLOW << "PRESS 1 to Confirm your Order OR PRESS 0 to Cancel your Order: ";
     int verify;
     cin >> verify;
@@ -362,19 +537,37 @@ void Fried()
         Receipt receipt = {id, meal, mealPrice, quantity};
         add_last(list, receipt);
         system("cls");
-        setPosition(70, 5);
-        cout << GREEN << "PRESS 1 To Make Another Order OR PRESS Any Number to Finish Your Order: " << RESET;
         int num;
-        cin >> num;
-        if (num == 1)
+        int line2 = 0;
+        while (true)
         {
-            return;
-        }
-        else
-        {
-            system("cls");
-            Display(list);
-            SaveHistory(list);
+            setPosition(70, 5 + line2);
+            cout << GREEN << "PRESS 1 To Make Another Order OR PRESS Any Number to Finish Your Order: " << RESET;
+            line2++;
+            if (cin >> num)
+            {
+                if (num == 1)
+                {
+                    return;
+                }
+                else
+                {
+                    system("cls");
+                    printing();
+                    system("cls");
+                    Display(list);
+                    SaveHistory(list);
+                    break;
+                }
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, 5 + line2);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line2++;
+            }
         }
     }
     else if (verify == 0)
@@ -397,7 +590,7 @@ void Appetizer()
     {
         return;
     }
-    vector<Food> dishes;
+    Queue *queue = EmptyQueue();
     string line;
     getline(file, line);
     setPosition(87, 5);
@@ -423,7 +616,9 @@ void Appetizer()
         getline(ss, priceStr, ',');
         int id = stoi(idstr);
         double price = stod(priceStr);
-        dishes.push_back({id, name, price});
+        // add to queue for customer to order
+        Food food = {id, name, price};
+        enqueue(queue, food);
         setPosition(70, y);
         cout << YELLOW << "| " << RESET << ORANGE << id << RESET;
         setPosition(80, y);
@@ -436,44 +631,90 @@ void Appetizer()
     cout << YELLOW << "---------------------------------------------------------------" << RESET << endl;
 
     string meal;
+    int order;
     double mealPrice = 0;
+    int idInputLine = y + 2;
     int id;
-    while (true)
+    bool ordered = false;
+    while (!ordered)
     {
-        setPosition(70, y + 2);
-        cout << YELLOW << "Choose your order (ID): " << RESET;
-        int order;
-        cin >> order;
-        bool found = false;
-        for (Food food : dishes)
+        int line = 0;
+        while (true)
         {
-            if (order == food.id)
+            setPosition(70, y + 2 + line);
+            cout << YELLOW << "Choose your order (ID): " << RESET;
+            idInputLine = y + 2 + line;
+            line++;
+            if (cin >> order)
             {
-                id = food.id;
-                meal = food.name;
-                mealPrice = food.price;
-                y = y + 2;
-                found = true;
-                break;
+                if (order == 0)
+                {
+                    return;
+                }
+                bool found = false;
+
+                Menu *current = queue->front;
+                while (current != nullptr)
+                {
+                    if (order == current->food.id)
+                    {
+                        id = current->food.id;
+                        meal = current->food.name;
+                        mealPrice = current->food.price;
+                        y = y + 2;
+                        found = true;
+                        ordered = true;
+                        break;
+                    }
+                    current = current->next;
+                }
+                if (!found)
+                {
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "This ID does not EXIST" << RESET << endl;
+                    line++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, y + 2 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
             }
         }
-        if (!found)
+    }
+    int quantity;
+    int line1 = 0;
+    while (true)
+    {
+        setPosition(70, idInputLine + 1 + line1);
+        cout << YELLOW << "Enter Quantity: " << RESET;
+        line1++;
+        if (cin >> quantity)
         {
-            setPosition(70, y + 3);
-            cout << RED << "This ID does not EXIST" << RESET << endl;
-            y = y + 2;
-            continue;
+            if (quantity == 0)
+            {
+                return;
+            }
+            break;
         }
         else
         {
-            break;
+            cin.clear();
+            cin.ignore(1000, '\n');
+            setPosition(70, idInputLine + 1 + line1);
+            cout << RED << "Please Enter number only!!" << RESET << endl;
+            line1++;
         }
     }
-    setPosition(70, y + 1);
-    cout << YELLOW << "Enter Quantity: " << RESET;
-    int quantity;
-    cin >> quantity;
-    setPosition(70, y + 2);
+
+    setPosition(70, idInputLine + 4);
     cout << YELLOW << "PRESS 1 to Confirm your Order OR PRESS 0 to Cancel your Order: ";
     int verify;
     cin >> verify;
@@ -485,19 +726,37 @@ void Appetizer()
         Receipt receipt = {id, meal, mealPrice, quantity};
         add_last(list, receipt);
         system("cls");
-        setPosition(70, 5);
-        cout << GREEN << "PRESS 1 To Make Another Order OR PRESS Any Number to Finish Your Order: " << RESET;
         int num;
-        cin >> num;
-        if (num == 1)
+        int line2 = 0;
+        while (true)
         {
-            return;
-        }
-        else
-        {
-            system("cls");
-            Display(list);
-            SaveHistory(list);
+            setPosition(70, 5 + line2);
+            cout << GREEN << "PRESS 1 To Make Another Order OR PRESS Any Number to Finish Your Order: " << RESET;
+            line2++;
+            if (cin >> num)
+            {
+                if (num == 1)
+                {
+                    return;
+                }
+                else
+                {
+                    system("cls");
+                    printing();
+                    system("cls");
+                    Display(list);
+                    SaveHistory(list);
+                    break;
+                }
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, 5 + line2);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line2++;
+            }
         }
     }
     else if (verify == 0)
@@ -522,7 +781,7 @@ void ExtraMeat()
         {
             return;
         }
-        vector<Food> dishes;
+        Queue *queue = EmptyQueue();
         string line;
         getline(file, line);
         setPosition(92, 5);
@@ -548,7 +807,9 @@ void ExtraMeat()
             getline(ss, priceStr, ',');
             int id = stoi(idstr);
             double price = stod(priceStr);
-            dishes.push_back({id, name, price});
+            // add to queue for customer to order
+            Food food = {id, name, price};
+            enqueue(queue, food);
             setPosition(70, y);
             cout << YELLOW << "| " << RESET << ORANGE << id << RESET;
             setPosition(80, y);
@@ -561,44 +822,90 @@ void ExtraMeat()
         cout << YELLOW << "---------------------------------------------------------------" << RESET << endl;
 
         string meal;
+        int order;
         double mealPrice = 0;
+        int idInputLine = y + 2;
         int id;
-        while (true)
+        bool ordered = false;
+        while (!ordered)
         {
-            setPosition(70, y + 2);
-            cout << YELLOW << "Choose your order (ID): " << RESET;
-            int order;
-            cin >> order;
-            bool found = false;
-            for (Food food : dishes)
+            int line = 0;
+            while (true)
             {
-                if (order == food.id)
+                setPosition(70, y + 2 + line);
+                cout << YELLOW << "Choose your order (ID): " << RESET;
+                idInputLine = y + 2 + line;
+                line++;
+                if (cin >> order)
                 {
-                    id = food.id;
-                    meal = food.name;
-                    mealPrice = food.price;
-                    y = y + 2;
-                    found = true;
-                    break;
+                    if (order == 0)
+                    {
+                        return;
+                    }
+                    bool found = false;
+
+                    Menu *current = queue->front;
+                    while (current != nullptr)
+                    {
+                        if (order == current->food.id)
+                        {
+                            id = current->food.id;
+                            meal = current->food.name;
+                            mealPrice = current->food.price;
+                            y = y + 2;
+                            found = true;
+                            ordered = true;
+                            break;
+                        }
+                        current = current->next;
+                    }
+                    if (!found)
+                    {
+                        setPosition(70, y + 2 + line);
+                        cout << RED << "This ID does not EXIST" << RESET << endl;
+                        line++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    cin.clear();
+                    cin.ignore(1000, '\n');
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "Please Enter number only!!" << RESET << endl;
+                    line++;
                 }
             }
-            if (!found)
+        }
+        int quantity;
+        int line1 = 0;
+        while (true)
+        {
+            setPosition(70, idInputLine + 1 + line1);
+            cout << YELLOW << "Enter Quantity: " << RESET;
+            line1++;
+            if (cin >> quantity)
             {
-                setPosition(70, y + 3);
-                cout << RED << "This ID does not EXIST" << RESET << endl;
-                y = y + 2;
-                continue;
+                if (quantity == 0)
+                {
+                    return;
+                }
+                break;
             }
             else
             {
-                break;
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, idInputLine + 1 + line1);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line1++;
             }
         }
-        setPosition(70, y + 1);
-        cout << YELLOW << "Enter Quantity: " << RESET;
-        int quantity;
-        cin >> quantity;
-        setPosition(70, y + 2);
+
+        setPosition(70, idInputLine + 4);
         cout << YELLOW << "PRESS 1 to Confirm your Order OR PRESS 0 to Cancel your Order: ";
         int verify;
         cin >> verify;
@@ -610,27 +917,49 @@ void ExtraMeat()
             Receipt receipt = {id, meal, mealPrice, quantity};
             add_last(list, receipt);
             system("cls");
-            setPosition(70, 5);
-            cout << GREEN << "PRESS 1 To Make Another Order OR PRESS Any Number to Finish Your Order: " << RESET;
             int num;
-            cin >> num;
-            if (num == 1)
+            int line2 = 0;
+            while (true)
             {
-                system("cls");
-                continue;
-            }
-            else
-            {
-                system("cls");
-                Display(list);
-                SaveHistory(list);
-                break;
+                setPosition(70, 5 + line2);
+                cout << GREEN << "PRESS 1 To Make Another Order OR PRESS Any Number to Finish Your Order: " << RESET;
+                line2++;
+                if (cin >> num)
+                {
+                    if (num == 1)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        system("cls");
+                        printing();
+                        system("cls");
+                        Display(list);
+                        SaveHistory(list);
+                        break;
+                    }
+                }
+                else
+                {
+                    cin.clear();
+                    cin.ignore(1000, '\n');
+                    setPosition(70, 5 + line2);
+                    cout << RED << "Please Enter number only!!" << RESET << endl;
+                    line2++;
+                }
             }
         }
         else if (verify == 0)
         {
             return;
         }
+        setPosition(70, y + 1);
+        cout << YELLOW << "Press ENTER to continue..." << RESET << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        return;
     }
 }
 
@@ -642,7 +971,7 @@ void ComboSet()
     {
         return;
     }
-    vector<Food> dishes;
+    Queue *queue = EmptyQueue();
     string line;
     getline(file, line);
     setPosition(87, 5);
@@ -668,7 +997,9 @@ void ComboSet()
         getline(ss, priceStr, ',');
         int id = stoi(idstr);
         double price = stod(priceStr);
-        dishes.push_back({id, name, price});
+        // add to queue for customer to order
+        Food food = {id, name, price};
+        enqueue(queue, food);
         setPosition(70, y);
         cout << YELLOW << "| " << RESET << ORANGE << id << RESET;
         setPosition(80, y);
@@ -681,47 +1012,132 @@ void ComboSet()
     cout << YELLOW << "---------------------------------------------------------------" << RESET << endl;
 
     string meal;
+    int order;
     double mealPrice = 0;
+    int idInputLine = y + 2;
     int id;
-    while (true)
+    bool ordered = false;
+    while (!ordered)
     {
-        setPosition(70, y + 2);
-        cout << YELLOW << "Choose your order (ID): " << RESET;
-        int order;
-        cin >> order;
-        bool found = false;
-        for (Food food : dishes)
+        int line = 0;
+        while (true)
         {
-            if (order == food.id)
+            setPosition(70, y + 2 + line);
+            cout << YELLOW << "Choose your order (ID): " << RESET;
+            idInputLine = y + 2 + line;
+            line++;
+            if (cin >> order)
             {
-                id = food.id;
-                meal = food.name;
-                mealPrice = food.price;
-                y = y + 2;
-                found = true;
-                break;
+                if (order == 0)
+                {
+                    return;
+                }
+                bool found = false;
+
+                Menu *current = queue->front;
+                while (current != nullptr)
+                {
+                    if (order == current->food.id)
+                    {
+                        id = current->food.id;
+                        meal = current->food.name;
+                        mealPrice = current->food.price;
+                        y = y + 2;
+                        found = true;
+                        ordered = true;
+                        break;
+                    }
+                    current = current->next;
+                }
+                if (!found)
+                {
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "This ID does not EXIST" << RESET << endl;
+                    line++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, y + 2 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
             }
         }
-        if (!found)
+    }
+    int quantity;
+    int line1 = 0;
+    while (true)
+    {
+        setPosition(70, idInputLine + 1 + line1);
+        cout << YELLOW << "Enter Quantity: " << RESET;
+        line1++;
+        if (cin >> quantity)
         {
-            setPosition(70, y + 3);
-            cout << RED << "This ID does not EXIST" << RESET << endl;
-            y = y + 2;
-            continue;
+            if (quantity == 0)
+            {
+                return;
+            }
+            break;
         }
         else
         {
-            break;
+            cin.clear();
+            cin.ignore(1000, '\n');
+            setPosition(70, idInputLine + 1 + line1);
+            cout << RED << "Please Enter number only!!" << RESET << endl;
+            line1++;
         }
     }
-    setPosition(70, y + 1);
-    cout << YELLOW << "Enter Quantity: " << RESET;
-    int quantity;
-    cin >> quantity;
-    setPosition(70, y + 2);
+    setPosition(70, idInputLine + 4);
     cout << YELLOW << "PRESS 1 to Confirm your Order OR PRESS 0 to Cancel your Order: ";
     int verify;
     cin >> verify;
+    if (verify == 1)
+    {
+        setPosition(70, y + 4);
+        cout << GREEN << "Order Complete" << RESET << endl;
+        Receipt receipt = {id, meal, mealPrice, quantity};
+        add_last(list, receipt);
+        system("cls");
+        int num;
+        int line2 = 0;
+        while (true)
+        {
+            setPosition(70, 5 + line2);
+            cout << GREEN << "PRESS 1 To Make Another Order OR PRESS Any Number to Finish Your Order: " << RESET;
+            line2++;
+            if (cin >> num)
+            {
+                if (num == 1)
+                {
+                    return;
+                }
+                else
+                {
+                    system("cls");
+                    printing();
+                    system("cls");
+                    Display(list);
+                    SaveHistory(list);
+                    break;
+                }
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, 5 + line2);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line2++;
+            }
+        }
+    }
 
     if (verify == 1)
     {

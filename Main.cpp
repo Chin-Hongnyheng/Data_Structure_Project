@@ -14,12 +14,15 @@
 #include "Header/Earning.h"
 #include "Header/Registered.h"
 #include "Header/OrderHistory.h"
+#include "Header/AboutUs.h"
+#include "Header/Description.h"
 
 using namespace std;
 
 int main()
 {
-    // Title();
+    Title();
+    loading();
     while (true)
     {
         setPosition(80, 5);
@@ -33,11 +36,27 @@ int main()
         setPosition(80, 10);
         cout << "4. Description" << endl;
         setPosition(80, 11);
-        cout << "5. Exit" << endl;
-        setPosition(80, 13);
-        cout << "Choose an option: " << RESET;
+        cout << "5. Exit" << RESET << endl;
         int opt;
-        cin >> opt;
+        int line = 0;
+        while (true)
+        {
+            setPosition(80, 13 + line);
+            cout << GREEN << "Choose an option: " << RESET;
+            if (cin >> opt)
+            {
+                break;
+            }
+            else
+            {
+                line++;
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(80, 13 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
+            }
+        }
         switch (opt)
         {
         case 1:
@@ -53,19 +72,31 @@ int main()
                     setPosition(80, 7);
                     cout << GREEN << "1. Place an order" << RESET << endl;
                     setPosition(80, 8);
-                    cout << GREEN << "2. Rating" << RESET << endl;
+                    cout << GREEN << "2. Admin Panel" << RESET << endl;
                     setPosition(80, 9);
-                    cout << GREEN << "3. Feed Back" << RESET << endl;
+                    cout << GREEN << "3. Order History" << RESET << endl;
                     setPosition(80, 10);
-                    cout << GREEN << "4. Admin Panel" << RESET << endl;
-                    setPosition(80, 11);
-                    cout << GREEN << "5. Order History" << RESET << endl;
-                    setPosition(80, 12);
-                    cout << GREEN << "6. Log Out" << RESET << endl;
-                    setPosition(80, 14);
-                    cout << GREEN << "Choose an option: " << RESET;
+                    cout << GREEN << "4. Log Out" << RESET << endl;
                     int opt1;
-                    cin >> opt1;
+                    int line = 0;
+                    while (true)
+                    {
+                        setPosition(80, 12 + line);
+                        cout << GREEN << "Choose an option: " << RESET;
+                        if (cin >> opt1)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            line++;
+                            cin.clear();
+                            cin.ignore(1000, '\n');
+                            setPosition(80, 12 + line);
+                            cout << RED << "Please Enter number only!!" << RESET << endl;
+                            line++;
+                        }
+                    }
                     switch (opt1)
                     {
                     case 1:
@@ -88,10 +119,26 @@ int main()
                             cout << GREEN << "5. Combo Set" << RESET << endl;
                             setPosition(80, 12);
                             cout << GREEN << "6. Back" << RESET << endl;
-                            setPosition(80, 14);
-                            cout << GREEN << "Choose an option: " << RESET;
                             int opt2;
-                            cin >> opt2;
+                            int line = 0;
+                            while (true)
+                            {
+                                setPosition(80, 14 + line);
+                                cout << GREEN << "Choose an option: " << RESET;
+                                if (cin >> opt2)
+                                {
+                                    break;
+                                }
+                                else
+                                {
+                                    line++;
+                                    cin.clear();
+                                    cin.ignore(1000, '\n');
+                                    setPosition(80, 14 + line);
+                                    cout << RED << "Please Enter number only!!" << RESET << endl;
+                                    line++;
+                                }
+                            }
                             switch (opt2)
                             {
                             case 1:
@@ -119,18 +166,20 @@ int main()
                                 system("cls");
                                 break;
                             default:
+                                system("cls");
+                                setPosition(80, 5);
+                                cout << RED << "Incorrect Number! Please Try again!!" << RESET << endl;
+                                setPosition(80, 6);
+                                cout << YELLOW << "PRESS Enter to continue..." << RESET;
+                                cin.ignore();
+                                cin.get();
+                                system("cls");
                                 break;
                             }
                         }
                         break;
                     }
                     case 2:
-
-                        break;
-                    case 3:
-
-                        break;
-                    case 4:
                     {
                         bool found = verifyAdmin();
                         if (found)
@@ -157,10 +206,26 @@ int main()
                                 cout << "7. View Sale History" << endl;
                                 setPosition(80, 13);
                                 cout << "8. Back" << endl;
-                                setPosition(80, 15);
-                                cout << "Choose an option: " << RESET;
                                 int opt3;
-                                cin >> opt3;
+                                int line = 0;
+                                while (true)
+                                {
+                                    setPosition(80, 15 + line);
+                                    cout << GREEN << "Choose an option: " << RESET;
+                                    if (cin >> opt3)
+                                    {
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        line++;
+                                        cin.clear();
+                                        cin.ignore(1000, '\n');
+                                        setPosition(80, 15 + line);
+                                        cout << RED << "Please Enter number only!!" << RESET << endl;
+                                        line++;
+                                    }
+                                }
                                 switch (opt3)
                                 {
                                 case 1:
@@ -169,10 +234,26 @@ int main()
                                     while (addLoop)
                                     {
                                         displayMenu();
-                                        setPosition(80, 15);
-                                        cout << GREEN << "Choose an option: " << RESET;
                                         int opt5;
-                                        cin >> opt5;
+                                        int line = 0;
+                                        while (true)
+                                        {
+                                            setPosition(80, 15 + line);
+                                            cout << GREEN << "Choose an option: " << RESET;
+                                            if (cin >> opt5)
+                                            {
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                line++;
+                                                cin.clear();
+                                                cin.ignore(1000, '\n');
+                                                setPosition(80, 15 + line);
+                                                cout << RED << "Please Enter number only!!" << RESET << endl;
+                                                line++;
+                                            }
+                                        }
                                         switch (opt5)
                                         {
                                         case 1:
@@ -218,10 +299,26 @@ int main()
                                     while (menuLoop)
                                     {
                                         displayMenu();
-                                        setPosition(80, 15);
-                                        cout << GREEN << "Choose an option: " << RESET;
                                         int opt4;
-                                        cin >> opt4;
+                                        int line = 0;
+                                        while (true)
+                                        {
+                                            setPosition(80, 15 + line);
+                                            cout << GREEN << "Choose an option: " << RESET;
+                                            if (cin >> opt4)
+                                            {
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                line++;
+                                                cin.clear();
+                                                cin.ignore(1000, '\n');
+                                                setPosition(80, 15 + line);
+                                                cout << RED << "Please Enter number only!!" << RESET << endl;
+                                                line++;
+                                            }
+                                        }
                                         switch (opt4)
                                         {
                                         case 1:
@@ -267,10 +364,26 @@ int main()
                                     while (UpdateLoop)
                                     {
                                         displayMenu();
-                                        setPosition(80, 15);
-                                        cout << GREEN << "Choose an option: " << RESET;
                                         int opt5;
-                                        cin >> opt5;
+                                        int line = 0;
+                                        while (true)
+                                        {
+                                            setPosition(80, 15 + line);
+                                            cout << GREEN << "Choose an option: " << RESET;
+                                            if (cin >> opt5)
+                                            {
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                line++;
+                                                cin.clear();
+                                                cin.ignore(1000, '\n');
+                                                setPosition(80, 15 + line);
+                                                cout << RED << "Please Enter number only!!" << RESET << endl;
+                                                line++;
+                                            }
+                                        }
                                         switch (opt5)
                                         {
                                         case 1:
@@ -376,6 +489,16 @@ int main()
                                     adminLoop = false;
                                     system("cls");
                                     break;
+                                default:
+                                    system("cls");
+                                    setPosition(80, 5);
+                                    cout << RED << "Incorrect Number! Please Try again!!" << RESET << endl;
+                                    setPosition(80, 6);
+                                    cout << YELLOW << "PRESS Enter to continue..." << RESET;
+                                    cin.ignore();
+                                    cin.get();
+                                    system("cls");
+                                    break;
                                 }
                             }
                         }
@@ -389,18 +512,34 @@ int main()
                         }
                     }
                     break;
-                    case 5:
+                    case 3:
                         system("cls");
                         Order(list);
                         break;
-                    case 6:
+                    case 4:
                         Exitloop = false;
                         system("cls");
                         break;
                     default:
+                        system("cls");
+                        setPosition(80, 5);
+                        cout << RED << "Incorrect Number! Please Try again!!" << RESET << endl;
+                        setPosition(80, 6);
+                        cout << YELLOW << "PRESS Enter to continue..." << RESET;
+                        cin.ignore();
+                        cin.get();
+                        system("cls");
                         break;
                     }
                 }
+            }
+            else
+            {
+                setPosition(80, 5);
+                cout << RED << "Incorrect Input!! Please try again!!" << endl;
+                cin.ignore();
+                cin.get();
+                system("cls");
             }
         }
         break;
@@ -408,12 +547,35 @@ int main()
             signIn();
             break;
         case 3:
+            system("cls");
+            DisplayAboutUs();
             break;
         case 4:
+            system("cls");
+            DisplayDescription();
             break;
         case 5:
-            break;
+        {
+            system("cls");
+            string goodbye = "Thank You For Using Our Program.";
+            setPosition(80, 5);
+            for (char a : goodbye)
+            {
+                cout << GREEN << a;
+                Sleep(50);
+            }
+            exit(0);
+        }
+        break;
         default:
+            system("cls");
+            setPosition(80, 5);
+            cout << RED << "Incorrect Number! Please Try again!!" << RESET << endl;
+            setPosition(80, 6);
+            cout << YELLOW << "PRESS Enter to continue..." << RESET;
+            cin.ignore();
+            cin.get();
+            system("cls");
             break;
         }
     }

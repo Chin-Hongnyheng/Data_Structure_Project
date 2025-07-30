@@ -1,8 +1,9 @@
 #include <iostream>
 #include "Design.h"
 #include <fstream>
-#include <vector>
+
 #include <sstream>
+
 #ifndef DISPLAY_H
 #define DISPLAY_H
 void displaySingleSet()

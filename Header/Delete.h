@@ -2,9 +2,129 @@
 #include <fstream>
 #include <sstream>
 #include "Design.h"
-#include <vector>
+
 #ifndef DELETE_h
 #define DELETE_h
+
+struct Delete
+{
+    Food food;
+    Delete *next;
+};
+struct DeleteList
+{
+    int n;
+    Delete *head;
+    Delete *tail;
+};
+DeleteList *createList()
+{
+    DeleteList *ls = new DeleteList;
+    ls->n = 0;
+    ls->head = nullptr;
+    ls->tail = nullptr;
+    return ls;
+}
+void delete_first_id(DeleteList *ls)
+{
+    if (ls->n == 0)
+    {
+        return;
+    }
+    Delete *d = ls->head;
+    ls->head = ls->head->next;
+    delete d;
+    if (ls->n == 1)
+    {
+        ls->tail = nullptr;
+    }
+    ls->n--;
+}
+void delete_last_id(DeleteList *ls)
+{
+    if (ls->n == 0)
+    {
+        return;
+    }
+    if (ls->n == 1)
+    {
+        delete ls->tail;
+        ls->head = ls->tail = nullptr;
+    }
+    else
+    {
+        Delete *d = ls->head;
+        while (d->next != ls->tail)
+        {
+            d = d->next;
+        }
+        d->next = nullptr;
+        delete ls->tail;
+        ls->tail = d;
+    }
+}
+
+bool delete_on_Id(DeleteList *ls, int id)
+{
+    Delete *temp = ls->head;
+    int count = 0;
+    int pos = -1;
+    while (temp != nullptr)
+    {
+        if (id == temp->food.id)
+        {
+            pos = count;
+            break;
+        }
+        temp = temp->next;
+        count++;
+    }
+    if (pos == -1)
+    {
+        return false;
+    }
+    if (pos == 0)
+    {
+        delete_first_id(ls);
+        ls->n--;
+    }
+    else if (pos == ls->n - 1)
+    {
+        delete_last_id(ls);
+        ls->n--;
+    }
+    else
+    {
+        Delete *current = ls->head;
+        for (int i = 0; i < pos - 1; i++)
+        {
+            current = current->next;
+        }
+        Delete *deleteid = current->next;
+        current->next = deleteid->next;
+        delete deleteid;
+        ls->n--;
+    }
+    return true;
+}
+void add_last_id(DeleteList *ls, Food food)
+{
+    Delete *d = new Delete();
+    d->food.id = food.id;
+    d->food.name = food.name;
+    d->food.price = food.price;
+    d->next = nullptr;
+    if (ls->n == 0)
+    {
+        ls->head = d;
+    }
+    else
+    {
+        ls->tail->next = d;
+    }
+    ls->tail = d;
+    ls->n++;
+}
 
 void DeleteInSingleSet()
 {
@@ -15,10 +135,11 @@ void DeleteInSingleSet()
         return;
     }
 
-    vector<Food> dishes;
+    DeleteList *dl = createList();
     string line;
     getline(inputfile, line);
-
+    setPosition(67, 3);
+    cout << YELLOW << "Type Number 0 to Exit the Program and Cancel this Menu" << RESET << endl;
     setPosition(81, 5);
     cout << YELLOW << "==== Single Set Menu ====" << endl;
     setPosition(70, 6);
@@ -43,7 +164,8 @@ void DeleteInSingleSet()
         getline(ss, priceStr, ',');
         int id = stoi(idstr);
         double price = stod(priceStr);
-        dishes.push_back({id, name, price});
+        Food food = {id, name, price};
+        add_last_id(dl, food);
         setPosition(70, y);
         cout << YELLOW << "| " << RESET << ORANGE << id << RESET;
         setPosition(80, y);
@@ -57,35 +179,57 @@ void DeleteInSingleSet()
     inputfile.close();
 
     int dishesId;
+    int idInputLine = y + 2;
+    bool deleted = false;
     bool found = false;
-    while (true)
+    while (!deleted)
     {
-        setPosition(70, y + 2);
-        cout << YELLOW << "Enter a dishes ID: " << RESET;
-        cin >> dishesId;
-        for (int i = 0; i < dishes.size(); i++)
+        int line = 0;
+        while (true)
         {
-            if (dishes[i].id == dishesId)
+            setPosition(70, y + 2 + line);
+            cout << YELLOW << "Enter a dishes ID: " << RESET;
+            idInputLine = y + 2 + line;
+            line++;
+            if (cin >> dishesId)
             {
-                // erase() receive only iterator not index or object
-                found = true;
-                dishes.erase(dishes.begin() + i);
-                break;
+                if (dishesId == 0)
+                {
+                    return;
+                }
+                Delete *temp = dl->head;
+                while (temp != nullptr)
+                {
+                    if (temp->food.id == dishesId)
+                    {
+                        found = delete_on_Id(dl, dishesId);
+                        deleted = true;
+                        break;
+                    }
+                    temp = temp->next;
+                }
+                if (!found)
+                {
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "NO ID Found" << RESET << endl;
+                    line++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, y + 2 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
             }
         }
-        if (!found)
-        {
-            setPosition(70, y + 3);
-            cout << RED << "NO ID Found" << RESET << endl;
-            y = y + 2;
-            continue;
-        }
-        else
-        {
-            break;
-        }
     }
-    setPosition(70, y + 3);
+    setPosition(70, idInputLine + 1);
     cout << YELLOW << "PRESS 1 to Confirm Deleting OR PRESS 0 to Cancel Deleting: " << RESET;
     int confirm;
     cin >> confirm;
@@ -95,18 +239,20 @@ void DeleteInSingleSet()
         outputfile.open("Data/SingleSet.csv", ios::trunc);
         if (!outputfile.is_open())
         {
-            setPosition(70, y + 7);
+            setPosition(70, idInputLine + 5);
             cout << RED << "File cannot be Opened" << RESET << endl;
         }
         else
         {
             outputfile << "ID,Name,Price\n";
-            for (Food food : dishes)
+            Delete *temp = dl->head;
+            while (temp != nullptr)
             {
-                outputfile << food.id << ',' << food.name << ',' << fixed << setprecision(2) << food.price << endl;
+                outputfile << temp->food.id << ',' << temp->food.name << ',' << fixed << setprecision(2) << temp->food.price << endl;
+                temp = temp->next;
             }
             outputfile.close();
-            setPosition(70, y + 4);
+            setPosition(70, idInputLine + 2);
             cout << GREEN << "Dish Deleted Successfully" << RESET << endl;
         }
     }
@@ -114,7 +260,7 @@ void DeleteInSingleSet()
     {
         return;
     }
-    setPosition(70, y + 6);
+    setPosition(70, idInputLine + 4);
     cin.ignore();
     cout << YELLOW << "PRESS Enter to continue..." << RESET << endl;
     cin.get();
@@ -130,9 +276,11 @@ void DeleteInSignature()
     {
         return;
     }
-    vector<Food> dishes;
+    DeleteList *dl = createList();
     string line;
     getline(file, line);
+    setPosition(67, 3);
+    cout << YELLOW << "Type Number 0 to Exit the Program and Cancel this Menu" << RESET << endl;
     setPosition(85, 5);
     cout << YELLOW << "==== Signature Set Menu ====" << endl;
     setPosition(70, 6);
@@ -157,7 +305,8 @@ void DeleteInSignature()
         getline(ss, priceStr, ',');
         int id = stoi(idstr);
         double price = stod(priceStr);
-        dishes.push_back({id, name, price});
+        Food food = {id, name, price};
+        add_last_id(dl, food);
         setPosition(70, y);
         cout << YELLOW << "| " << RESET << ORANGE << id << RESET;
         setPosition(80, y);
@@ -171,32 +320,54 @@ void DeleteInSignature()
     file.close();
 
     int dishesId;
+    int idInputLine = y + 2;
+    bool deleted = false;
     bool found = false;
-    while (true)
+    while (!deleted)
     {
-        setPosition(70, y + 2);
-        cout << YELLOW << "Enter a dishes ID: " << RESET;
-        cin >> dishesId;
-        for (int i = 0; i < dishes.size(); i++)
+        int line = 0;
+        while (true)
         {
-            if (dishes[i].id == dishesId)
+            setPosition(70, y + 2 + line);
+            cout << YELLOW << "Enter a dishes ID: " << RESET;
+            idInputLine = y + 2 + line;
+            line++;
+            if (cin >> dishesId)
             {
-                // erase() receive only iterator not index or object
-                found = true;
-                dishes.erase(dishes.begin() + i);
-                break;
+                if (dishesId == 0)
+                {
+                    return;
+                }
+                Delete *temp = dl->head;
+                while (temp != nullptr)
+                {
+                    if (temp->food.id == dishesId)
+                    {
+                        found = delete_on_Id(dl, dishesId);
+                        deleted = true;
+                        break;
+                    }
+                    temp = temp->next;
+                }
+                if (!found)
+                {
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "NO ID Found" << RESET << endl;
+                    line++;
+                }
+                else
+                {
+                    break;
+                }
             }
-        }
-        if (!found)
-        {
-            setPosition(70, y + 3);
-            cout << RED << "NO ID Found" << RESET << endl;
-            y = y + 2;
-            continue;
-        }
-        else
-        {
-            break;
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, y + 2 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
+            }
         }
     }
     setPosition(70, y + 3);
@@ -215,9 +386,11 @@ void DeleteInSignature()
         else
         {
             outputfile << "ID,Name,Price\n";
-            for (Food food : dishes)
+            Delete *temp = dl->head;
+            while (temp != nullptr)
             {
-                outputfile << food.id << ',' << food.name << ',' << fixed << setprecision(2) << food.price << endl;
+                outputfile << temp->food.id << ',' << temp->food.name << ',' << fixed << setprecision(2) << temp->food.price << endl;
+                temp = temp->next;
             }
             outputfile.close();
             setPosition(70, y + 4);
@@ -244,9 +417,11 @@ void DeleteInFried()
     {
         return;
     }
-    vector<Food> dishes;
+    DeleteList *dl = createList();
     string line;
     getline(file, line);
+    setPosition(67, 3);
+    cout << YELLOW << "Type Number 0 to Exit the Program and Cancel this Menu" << RESET << endl;
     setPosition(90, 5);
     cout << YELLOW << "==== Fried Set Menu ====" << endl;
     setPosition(70, 6);
@@ -270,7 +445,8 @@ void DeleteInFried()
         getline(ss, priceStr, ',');
         int id = stoi(idstr);
         double price = stod(priceStr);
-        dishes.push_back({id, name, price});
+        Food food = {id, name, price};
+        add_last_id(dl, food);
         setPosition(70, y);
         cout << YELLOW << "| " << RESET << ORANGE << id << RESET;
         setPosition(80, y);
@@ -284,32 +460,54 @@ void DeleteInFried()
     file.close();
 
     int dishesId;
+    int idInputLine = y + 2;
+    bool deleted = false;
     bool found = false;
-    while (true)
+    while (!deleted)
     {
-        setPosition(70, y + 2);
-        cout << YELLOW << "Enter a dishes ID: " << RESET;
-        cin >> dishesId;
-        for (int i = 0; i < dishes.size(); i++)
+        int line = 0;
+        while (true)
         {
-            if (dishes[i].id == dishesId)
+            setPosition(70, y + 2 + line);
+            cout << YELLOW << "Enter a dishes ID: " << RESET;
+            idInputLine = y + 2 + line;
+            line++;
+            if (cin >> dishesId)
             {
-                // erase() receive only iterator not index or object
-                found = true;
-                dishes.erase(dishes.begin() + i);
-                break;
+                if (dishesId == 0)
+                {
+                    return;
+                }
+                Delete *temp = dl->head;
+                while (temp != nullptr)
+                {
+                    if (temp->food.id == dishesId)
+                    {
+                        found = delete_on_Id(dl, dishesId);
+                        deleted = true;
+                        break;
+                    }
+                    temp = temp->next;
+                }
+                if (!found)
+                {
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "NO ID Found" << RESET << endl;
+                    line++;
+                }
+                else
+                {
+                    break;
+                }
             }
-        }
-        if (!found)
-        {
-            setPosition(70, y + 3);
-            cout << RED << "NO ID Found" << RESET << endl;
-            y = y + 2;
-            continue;
-        }
-        else
-        {
-            break;
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, y + 2 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
+            }
         }
     }
     setPosition(70, y + 3);
@@ -328,9 +526,11 @@ void DeleteInFried()
         else
         {
             outputfile << "ID,Name,Price\n";
-            for (Food food : dishes)
+            Delete *temp = dl->head;
+            while (temp != nullptr)
             {
-                outputfile << food.id << ',' << food.name << ',' << fixed << setprecision(2) << food.price << endl;
+                outputfile << temp->food.id << ',' << temp->food.name << ',' << fixed << setprecision(2) << temp->food.price << endl;
+                temp = temp->next;
             }
             outputfile.close();
             setPosition(70, y + 4);
@@ -357,9 +557,11 @@ void DeleteInAppetizer()
     {
         return;
     }
-    vector<Food> dishes;
+    DeleteList *dl = createList();
     string line;
     getline(file, line);
+    setPosition(67, 3);
+    cout << YELLOW << "Type Number 0 to Exit the Program and Cancel this Menu" << RESET << endl;
     setPosition(87, 5);
     cout << YELLOW << "==== Appetizer Set Menu ====" << endl;
     setPosition(70, 6);
@@ -383,7 +585,8 @@ void DeleteInAppetizer()
         getline(ss, priceStr, ',');
         int id = stoi(idstr);
         double price = stod(priceStr);
-        dishes.push_back({id, name, price});
+        Food food = {id, name, price};
+        add_last_id(dl, food);
         setPosition(70, y);
         cout << YELLOW << "| " << RESET << ORANGE << id << RESET;
         setPosition(80, y);
@@ -397,32 +600,54 @@ void DeleteInAppetizer()
     file.close();
 
     int dishesId;
+    int idInputLine = y + 2;
+    bool deleted = false;
     bool found = false;
-    while (true)
+    while (!deleted)
     {
-        setPosition(70, y + 2);
-        cout << YELLOW << "Enter a dishes ID: " << RESET;
-        cin >> dishesId;
-        for (int i = 0; i < dishes.size(); i++)
+        int line = 0;
+        while (true)
         {
-            if (dishes[i].id == dishesId)
+            setPosition(70, y + 2 + line);
+            cout << YELLOW << "Enter a dishes ID: " << RESET;
+            idInputLine = y + 2 + line;
+            line++;
+            if (cin >> dishesId)
             {
-                // erase() receive only iterator not index or object
-                found = true;
-                dishes.erase(dishes.begin() + i);
-                break;
+                if (dishesId == 0)
+                {
+                    return;
+                }
+                Delete *temp = dl->head;
+                while (temp != nullptr)
+                {
+                    if (temp->food.id == dishesId)
+                    {
+                        found = delete_on_Id(dl, dishesId);
+                        deleted = true;
+                        break;
+                    }
+                    temp = temp->next;
+                }
+                if (!found)
+                {
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "NO ID Found" << RESET << endl;
+                    line++;
+                }
+                else
+                {
+                    break;
+                }
             }
-        }
-        if (!found)
-        {
-            setPosition(70, y + 3);
-            cout << RED << "NO ID Found" << RESET << endl;
-            y = y + 2;
-            continue;
-        }
-        else
-        {
-            break;
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, y + 2 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
+            }
         }
     }
     setPosition(70, y + 3);
@@ -441,9 +666,11 @@ void DeleteInAppetizer()
         else
         {
             outputfile << "ID,Name,Price\n";
-            for (Food food : dishes)
+            Delete *temp = dl->head;
+            while (temp != nullptr)
             {
-                outputfile << food.id << ',' << food.name << ',' << fixed << setprecision(2) << food.price << endl;
+                outputfile << temp->food.id << ',' << temp->food.name << ',' << fixed << setprecision(2) << temp->food.price << endl;
+                temp = temp->next;
             }
             outputfile.close();
             setPosition(70, y + 4);
@@ -470,9 +697,11 @@ void DeleteInExtraMeat()
     {
         return;
     }
-    vector<Food> dishes;
+    DeleteList *dl = createList();
     string line;
     getline(file, line);
+    setPosition(67, 3);
+    cout << YELLOW << "Type Number 0 to Exit the Program and Cancel this Menu" << RESET << endl;
     setPosition(92, 5);
     cout << YELLOW << "==== Extra Meat ====" << endl;
     setPosition(70, 6);
@@ -496,7 +725,8 @@ void DeleteInExtraMeat()
         getline(ss, priceStr, ',');
         int id = stoi(idstr);
         double price = stod(priceStr);
-        dishes.push_back({id, name, price});
+        Food food = {id, name, price};
+        add_last_id(dl, food);
         setPosition(70, y);
         cout << YELLOW << "| " << RESET << ORANGE << id << RESET;
         setPosition(80, y);
@@ -510,32 +740,54 @@ void DeleteInExtraMeat()
     file.close();
 
     int dishesId;
+    int idInputLine = y + 2;
+    bool deleted = false;
     bool found = false;
-    while (true)
+    while (!deleted)
     {
-        setPosition(70, y + 2);
-        cout << YELLOW << "Enter a dishes ID: " << RESET;
-        cin >> dishesId;
-        for (int i = 0; i < dishes.size(); i++)
+        int line = 0;
+        while (true)
         {
-            if (dishes[i].id == dishesId)
+            setPosition(70, y + 2 + line);
+            cout << YELLOW << "Enter a dishes ID: " << RESET;
+            idInputLine = y + 2 + line;
+            line++;
+            if (cin >> dishesId)
             {
-                // erase() receive only iterator not index or object
-                found = true;
-                dishes.erase(dishes.begin() + i);
-                break;
+                if (dishesId == 0)
+                {
+                    return;
+                }
+                Delete *temp = dl->head;
+                while (temp != nullptr)
+                {
+                    if (temp->food.id == dishesId)
+                    {
+                        found = delete_on_Id(dl, dishesId);
+                        deleted = true;
+                        break;
+                    }
+                    temp = temp->next;
+                }
+                if (!found)
+                {
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "NO ID Found" << RESET << endl;
+                    line++;
+                }
+                else
+                {
+                    break;
+                }
             }
-        }
-        if (!found)
-        {
-            setPosition(70, y + 3);
-            cout << RED << "NO ID Found" << RESET << endl;
-            y = y + 2;
-            continue;
-        }
-        else
-        {
-            break;
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, y + 2 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
+            }
         }
     }
     setPosition(70, y + 3);
@@ -554,9 +806,11 @@ void DeleteInExtraMeat()
         else
         {
             outputfile << "ID,Name,Price\n";
-            for (Food food : dishes)
+            Delete *temp = dl->head;
+            while (temp != nullptr)
             {
-                outputfile << food.id << ',' << food.name << ',' << fixed << setprecision(2) << food.price << endl;
+                outputfile << temp->food.id << ',' << temp->food.name << ',' << fixed << setprecision(2) << temp->food.price << endl;
+                temp = temp->next;
             }
             outputfile.close();
             setPosition(70, y + 4);
@@ -583,9 +837,11 @@ void DeleteInCombo()
     {
         return;
     }
-    vector<Food> dishes;
+    DeleteList *dl = createList();
     string line;
     getline(file, line);
+    setPosition(67, 3);
+    cout << YELLOW << "Type Number 0 to Exit the Program and Cancel this Menu" << RESET << endl;
     setPosition(87, 5);
     cout << YELLOW << "==== Combo Set Menu ====" << endl;
     setPosition(70, 6);
@@ -609,7 +865,8 @@ void DeleteInCombo()
         getline(ss, priceStr, ',');
         int id = stoi(idstr);
         double price = stod(priceStr);
-        dishes.push_back({id, name, price});
+        Food food = {id, name, price};
+        add_last_id(dl, food);
         setPosition(70, y);
         cout << YELLOW << "| " << RESET << ORANGE << id << RESET;
         setPosition(80, y);
@@ -623,32 +880,54 @@ void DeleteInCombo()
     file.close();
 
     int dishesId;
+    int idInputLine = y + 2;
+    bool deleted = false;
     bool found = false;
-    while (true)
+    while (!deleted)
     {
-        setPosition(70, y + 2);
-        cout << YELLOW << "Enter a dishes ID: " << RESET;
-        cin >> dishesId;
-        for (int i = 0; i < dishes.size(); i++)
+        int line = 0;
+        while (true)
         {
-            if (dishes[i].id == dishesId)
+            setPosition(70, y + 2 + line);
+            cout << YELLOW << "Enter a dishes ID: " << RESET;
+            idInputLine = y + 2 + line;
+            line++;
+            if (cin >> dishesId)
             {
-                // erase() receive only iterator not index or object
-                found = true;
-                dishes.erase(dishes.begin() + i);
-                break;
+                if (dishesId == 0)
+                {
+                    return;
+                }
+                Delete *temp = dl->head;
+                while (temp != nullptr)
+                {
+                    if (temp->food.id == dishesId)
+                    {
+                        found = delete_on_Id(dl, dishesId);
+                        deleted = true;
+                        break;
+                    }
+                    temp = temp->next;
+                }
+                if (!found)
+                {
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "NO ID Found" << RESET << endl;
+                    line++;
+                }
+                else
+                {
+                    break;
+                }
             }
-        }
-        if (!found)
-        {
-            setPosition(70, y + 3);
-            cout << RED << "NO ID Found" << RESET << endl;
-            y = y + 2;
-            continue;
-        }
-        else
-        {
-            break;
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, y + 2 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
+            }
         }
     }
     setPosition(70, y + 3);
@@ -667,9 +946,11 @@ void DeleteInCombo()
         else
         {
             outputfile << "ID,Name,Price\n";
-            for (Food food : dishes)
+            Delete *temp = dl->head;
+            while (temp != nullptr)
             {
-                outputfile << food.id << ',' << food.name << ',' << fixed << setprecision(2) << food.price << endl;
+                outputfile << temp->food.id << ',' << temp->food.name << ',' << fixed << setprecision(2) << temp->food.price << endl;
+                temp = temp->next;
             }
             outputfile.close();
             setPosition(70, y + 4);

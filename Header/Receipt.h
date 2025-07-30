@@ -42,14 +42,14 @@ int ReceiptPaper(List *ls)
         double price = temp->receipt.price * amount;
         setPosition(70, y);
         cout << GREEN << "|";
-        setPosition(72, y);
-        cout << temp->receipt.id;
+        setPosition(71, y);
+        cout << fixed << setw(2) << temp->receipt.id;
         setPosition(74, y);
         cout << temp->receipt.name;
         setPosition(104, y);
         cout << temp->receipt.quantity;
-        setPosition(112, y);
-        cout << fixed << setw(6) << setprecision(2) << price << " $|" << RESET << endl;
+        setPosition(113, y);
+        cout << fixed << setw(6) << setprecision(2) << setw(5) << price << " $|" << RESET << endl;
         temp = temp->next;
         total += price;
         y++;

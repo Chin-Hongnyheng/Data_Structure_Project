@@ -15,12 +15,67 @@ using namespace std;
 // for printing the receipt
 bool printed = true;
 
+// for showing the menu
 struct Food
 {
     int id;
     string name;
     double price;
 };
+
+struct Menu
+{
+    Food food;
+    Menu *next;
+};
+
+struct Queue
+{
+    int n;
+    Menu *front;
+    Menu *rear;
+};
+
+Queue *EmptyQueue()
+{
+    Queue *q = new Queue;
+    q->n = 0;
+    q->front = nullptr;
+    q->rear = nullptr;
+    return q;
+}
+bool isEmpty(Queue *q)
+{
+    return q->n == 0;
+}
+
+void enqueue(Queue *q, Food food)
+{
+    Menu *m = new Menu;
+    m->food.id = food.id;
+    m->food.name = food.name;
+    m->food.price = food.price;
+    m->next = nullptr;
+    if (q->n == 0)
+    {
+        q->front = m;
+        q->rear = m;
+    }
+    else
+    {
+        q->rear->next = m;
+        q->rear = m;
+    }
+    q->n++;
+}
+void dequeue(Queue *q)
+{
+    if (isEmpty(q))
+    {
+        return;
+    }
+    Menu *m = q->front;
+}
 
 // For receipt and Store Order History
 struct Receipt
@@ -105,6 +160,33 @@ void delete_last(List *ls)
         delete ls->tail;
         ls->tail = e;
     }
+}
+bool modify_quantity(List *ls, int id, int quantity)
+{
+    Component *temp = ls->head;
+    while (temp != nullptr)
+    {
+        if (id == temp->receipt.id)
+        {
+            temp->receipt.quantity = quantity;
+            return true;
+            break;
+        }
+    }
+    return false;
+}
+bool search_id(List *ls, int id)
+{
+    Component *temp = ls->head;
+    while (temp != nullptr)
+    {
+        if (id == temp->receipt.id)
+        {
+            return true;
+        }
+        temp = temp->next;
+    }
+    return false;
 }
 bool delete_id(List *ls, int id)
 {
@@ -244,6 +326,38 @@ void setPosition(int x, int y)
     // Use SHORT type because COORD Define in this window
     COORD C = {(SHORT)x, (SHORT)y};
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), C);
+}
+
+void loading()
+{
+    setPosition(75, 4);
+    cout << YELLOW << "Loading" << endl;
+    char x = 219;
+    setPosition(75, 6);
+    for (int i = 0; i <= 40; i++)
+    {
+        cout << YELLOW << x;
+        Sleep(50);
+    }
+    system("cls");
+}
+void printing()
+{
+    setPosition(80, 4);
+    cout << YELLOW << "Printing Receipt ";
+    char x = '.';
+    for (int i = 0; i < 3; i++)
+    {
+        setPosition(97, 4);
+        for (int j = 0; j < 5; j++)
+        {
+            cout << YELLOW << x;
+            Sleep(400);
+        }
+        setPosition(97, 4);
+        cout << "     " << flush;
+    }
+    system("cls");
 }
 void Title()
 {

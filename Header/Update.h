@@ -18,7 +18,8 @@ void UpdateInSingleSet()
     vector<Food> dishes;
     string line;
     getline(inputfile, line);
-
+    setPosition(67, 3);
+    cout << YELLOW << "Type Number 0 to Exit the Program and Cancel this Menu" << RESET << endl;
     setPosition(81, 5);
     cout << YELLOW << "==== Single Set Menu ====" << endl;
     setPosition(70, 6);
@@ -60,42 +61,90 @@ void UpdateInSingleSet()
     string dishesName;
     double dishesPrice;
     bool found = false;
-    while (true)
+    bool updated = false;
+    int idInputLine = y + 2;
+    while (!updated)
     {
-        setPosition(70, y + 2);
-        cout << YELLOW << "Enter a dishes ID: " << RESET;
-        cin >> dishesId;
-        for (Food &food : dishes)
+        int line = 0;
+        while (true)
         {
-            if (food.id == dishesId)
+            setPosition(70, y + 2 + line);
+            cout << YELLOW << "Enter a dishes ID: " << RESET;
+            idInputLine = y + 2 + line;
+            line++;
+            if (cin >> dishesId)
             {
-                setPosition(70, y + 3);
-                cout << YELLOW << "Enter new Dish Name: " << RESET;
-                cin.ignore();
-                getline(cin, dishesName);
-                setPosition(70, y + 4);
-                cout << YELLOW << "Enter new Dish Price: " << RESET;
-                cin >> dishesPrice;
-                cin.ignore();
-                found = true;
-                food.name = dishesName;
-                food.price = dishesPrice;
-                break;
+                if (dishesId == 0)
+                {
+                    return;
+                }
+                for (Food &food : dishes)
+                {
+                    if (food.id == dishesId)
+                    {
+                        setPosition(70, y + 2 + line);
+                        cout << YELLOW << "Enter new Dish Name: " << RESET;
+                        line++;
+                        cin.ignore();
+                        getline(cin, dishesName);
+                        if (dishesName == "0")
+                        {
+                            return;
+                        }
+                        while (true)
+                        {
+                            setPosition(70, y + 2 + line);
+                            cout << YELLOW << "Enter a Dish Price: " << RESET;
+                            line++;
+                            if (cin >> dishesPrice)
+                            {
+                                if (dishesPrice == 0)
+                                {
+                                    return;
+                                }
+                                break;
+                            }
+                            else
+                            {
+                                cin.clear();
+                                cin.ignore(1000, '\n');
+                                setPosition(70, y + 2 + line);
+                                cout << RED << "Please Enter number only!!" << RESET << endl;
+                                idInputLine = y + 2 + line;
+                                line++;
+                            }
+                        }
+                        cin.ignore();
+                        found = true;
+                        food.name = dishesName;
+                        food.price = dishesPrice;
+                        updated = true;
+                        line++;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "NO ID Found" << RESET << endl;
+                    line++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, y + 2 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
             }
         }
-        if (!found)
-        {
-            setPosition(70, y + 3);
-            cout << RED << "NO ID Found" << RESET << endl;
-            y = y + 2;
-            continue;
-        }
-        else
-        {
-            break;
-        }
     }
-    setPosition(70, y + 6);
+    setPosition(70, idInputLine + 4);
     cout << YELLOW << "PRESS 1 to Confirm Updating OR PRESS 0 to Cancel Updating: " << RESET;
     int confirm;
     cin >> confirm;
@@ -116,7 +165,7 @@ void UpdateInSingleSet()
                 outputfile << food.id << ',' << food.name << ',' << fixed << setprecision(2) << food.price << endl;
             }
             outputfile.close();
-            setPosition(70, y + 8);
+            setPosition(70, idInputLine + 6);
             cout << GREEN << "Dish Updated Successfully" << RESET << endl;
         }
     }
@@ -124,7 +173,7 @@ void UpdateInSingleSet()
     {
         return;
     }
-    setPosition(70, y + 10);
+    setPosition(70, idInputLine + 8);
     cin.ignore();
     cout << YELLOW << "PRESS Enter to continue..." << RESET << endl;
     cin.get();
@@ -143,6 +192,8 @@ void UpdateInSignature()
     vector<Food> dishes;
     string line;
     getline(file, line);
+    setPosition(67, 3);
+    cout << YELLOW << "Type Number 0 to Exit the Program and Cancel this Menu" << RESET << endl;
     setPosition(85, 5);
     cout << YELLOW << "==== Signature Set Menu ====" << endl;
     setPosition(70, 6);
@@ -184,49 +235,97 @@ void UpdateInSignature()
     string dishesName;
     double dishesPrice;
     bool found = false;
-    while (true)
+    bool updated = false;
+    int idInputLine = y + 2;
+    while (!updated)
     {
-        setPosition(70, y + 2);
-        cout << YELLOW << "Enter a dishes ID: " << RESET;
-        cin >> dishesId;
-        for (Food &food : dishes)
+        int line = 0;
+        while (true)
         {
-            if (food.id == dishesId)
+            setPosition(70, y + 2 + line);
+            cout << YELLOW << "Enter a dishes ID: " << RESET;
+            idInputLine = y + 2 + line;
+            line++;
+            if (cin >> dishesId)
             {
-                setPosition(70, y + 3);
-                cout << YELLOW << "Enter new Dish Name: " << RESET;
-                cin.ignore();
-                getline(cin, dishesName);
-                setPosition(70, y + 4);
-                cout << YELLOW << "Enter new Dish Price: " << RESET;
-                cin >> dishesPrice;
-                cin.ignore();
-                found = true;
-                food.name = dishesName;
-                food.price = dishesPrice;
-                break;
+                if (dishesId == 0)
+                {
+                    return;
+                }
+                for (Food &food : dishes)
+                {
+                    if (food.id == dishesId)
+                    {
+                        setPosition(70, y + 2 + line);
+                        cout << YELLOW << "Enter new Dish Name: " << RESET;
+                        line++;
+                        cin.ignore();
+                        getline(cin, dishesName);
+                        if (dishesName == "0")
+                        {
+                            return;
+                        }
+                        while (true)
+                        {
+                            setPosition(70, y + 2 + line);
+                            cout << YELLOW << "Enter a Dish Price: " << RESET;
+                            line++;
+                            if (cin >> dishesPrice)
+                            {
+                                if (dishesPrice == 0)
+                                {
+                                    return;
+                                }
+                                break;
+                            }
+                            else
+                            {
+                                cin.clear();
+                                cin.ignore(1000, '\n');
+                                setPosition(70, y + 2 + line);
+                                cout << RED << "Please Enter number only!!" << RESET << endl;
+                                idInputLine = y + 2 + line;
+                                line++;
+                            }
+                        }
+                        cin.ignore();
+                        found = true;
+                        food.name = dishesName;
+                        food.price = dishesPrice;
+                        updated = true;
+                        line++;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "NO ID Found" << RESET << endl;
+                    line++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, y + 2 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
             }
         }
-        if (!found)
-        {
-            setPosition(70, y + 3);
-            cout << RED << "NO ID Found" << RESET << endl;
-            y = y + 2;
-            continue;
-        }
-        else
-        {
-            break;
-        }
     }
-    setPosition(70, y + 6);
+    setPosition(70, idInputLine + 4);
     cout << YELLOW << "PRESS 1 to Confirm Updating OR PRESS 0 to Cancel Updating: " << RESET;
     int confirm;
     cin >> confirm;
     if (confirm == 1)
     {
         ofstream outputfile;
-        outputfile.open("Data/SignatureFood.csv", ios::trunc);
+        outputfile.open("Data/SingleSet.csv", ios::trunc);
         if (!outputfile.is_open())
         {
             setPosition(70, y + 7);
@@ -240,7 +339,7 @@ void UpdateInSignature()
                 outputfile << food.id << ',' << food.name << ',' << fixed << setprecision(2) << food.price << endl;
             }
             outputfile.close();
-            setPosition(70, y + 8);
+            setPosition(70, idInputLine + 6);
             cout << GREEN << "Dish Updated Successfully" << RESET << endl;
         }
     }
@@ -248,7 +347,7 @@ void UpdateInSignature()
     {
         return;
     }
-    setPosition(70, y + 10);
+    setPosition(70, idInputLine + 8);
     cin.ignore();
     cout << YELLOW << "PRESS Enter to continue..." << RESET << endl;
     cin.get();
@@ -307,49 +406,97 @@ void UpdateInFried()
     string dishesName;
     double dishesPrice;
     bool found = false;
-    while (true)
+    bool updated = false;
+    int idInputLine = y + 2;
+    while (!updated)
     {
-        setPosition(70, y + 2);
-        cout << YELLOW << "Enter a dishes ID: " << RESET;
-        cin >> dishesId;
-        for (Food &food : dishes)
+        int line = 0;
+        while (true)
         {
-            if (food.id == dishesId)
+            setPosition(70, y + 2 + line);
+            cout << YELLOW << "Enter a dishes ID: " << RESET;
+            idInputLine = y + 2 + line;
+            line++;
+            if (cin >> dishesId)
             {
-                setPosition(70, y + 3);
-                cout << YELLOW << "Enter new Dish Name: " << RESET;
-                cin.ignore();
-                getline(cin, dishesName);
-                setPosition(70, y + 4);
-                cout << YELLOW << "Enter new Dish Price: " << RESET;
-                cin >> dishesPrice;
-                cin.ignore();
-                found = true;
-                food.name = dishesName;
-                food.price = dishesPrice;
-                break;
+                if (dishesId == 0)
+                {
+                    return;
+                }
+                for (Food &food : dishes)
+                {
+                    if (food.id == dishesId)
+                    {
+                        setPosition(70, y + 2 + line);
+                        cout << YELLOW << "Enter new Dish Name: " << RESET;
+                        line++;
+                        cin.ignore();
+                        getline(cin, dishesName);
+                        if (dishesName == "0")
+                        {
+                            return;
+                        }
+                        while (true)
+                        {
+                            setPosition(70, y + 2 + line);
+                            cout << YELLOW << "Enter a Dish Price: " << RESET;
+                            line++;
+                            if (cin >> dishesPrice)
+                            {
+                                if (dishesPrice == 0)
+                                {
+                                    return;
+                                }
+                                break;
+                            }
+                            else
+                            {
+                                cin.clear();
+                                cin.ignore(1000, '\n');
+                                setPosition(70, y + 2 + line);
+                                cout << RED << "Please Enter number only!!" << RESET << endl;
+                                idInputLine = y + 2 + line;
+                                line++;
+                            }
+                        }
+                        cin.ignore();
+                        found = true;
+                        food.name = dishesName;
+                        food.price = dishesPrice;
+                        updated = true;
+                        line++;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "NO ID Found" << RESET << endl;
+                    line++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, y + 2 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
             }
         }
-        if (!found)
-        {
-            setPosition(70, y + 3);
-            cout << RED << "NO ID Found" << RESET << endl;
-            y = y + 2;
-            continue;
-        }
-        else
-        {
-            break;
-        }
     }
-    setPosition(70, y + 6);
+    setPosition(70, idInputLine + 4);
     cout << YELLOW << "PRESS 1 to Confirm Updating OR PRESS 0 to Cancel Updating: " << RESET;
     int confirm;
     cin >> confirm;
     if (confirm == 1)
     {
         ofstream outputfile;
-        outputfile.open("Data/SignatureFood.csv", ios::trunc);
+        outputfile.open("Data/SingleSet.csv", ios::trunc);
         if (!outputfile.is_open())
         {
             setPosition(70, y + 7);
@@ -363,7 +510,7 @@ void UpdateInFried()
                 outputfile << food.id << ',' << food.name << ',' << fixed << setprecision(2) << food.price << endl;
             }
             outputfile.close();
-            setPosition(70, y + 8);
+            setPosition(70, idInputLine + 6);
             cout << GREEN << "Dish Updated Successfully" << RESET << endl;
         }
     }
@@ -371,7 +518,7 @@ void UpdateInFried()
     {
         return;
     }
-    setPosition(70, y + 10);
+    setPosition(70, idInputLine + 8);
     cin.ignore();
     cout << YELLOW << "PRESS Enter to continue..." << RESET << endl;
     cin.get();
@@ -390,6 +537,8 @@ void UpdateInAppetizer()
     vector<Food> dishes;
     string line;
     getline(file, line);
+    setPosition(67, 3);
+    cout << YELLOW << "Type Number 0 to Exit the Program and Cancel this Menu" << RESET << endl;
     setPosition(87, 5);
     cout << YELLOW << "==== Appetizer Set Menu ====" << endl;
     setPosition(70, 6);
@@ -430,49 +579,97 @@ void UpdateInAppetizer()
     string dishesName;
     double dishesPrice;
     bool found = false;
-    while (true)
+    bool updated = false;
+    int idInputLine = y + 2;
+    while (!updated)
     {
-        setPosition(70, y + 2);
-        cout << YELLOW << "Enter a dishes ID: " << RESET;
-        cin >> dishesId;
-        for (Food &food : dishes)
+        int line = 0;
+        while (true)
         {
-            if (food.id == dishesId)
+            setPosition(70, y + 2 + line);
+            cout << YELLOW << "Enter a dishes ID: " << RESET;
+            idInputLine = y + 2 + line;
+            line++;
+            if (cin >> dishesId)
             {
-                setPosition(70, y + 3);
-                cout << YELLOW << "Enter new Dish Name: " << RESET;
-                cin.ignore();
-                getline(cin, dishesName);
-                setPosition(70, y + 4);
-                cout << YELLOW << "Enter new Dish Price: " << RESET;
-                cin >> dishesPrice;
-                cin.ignore();
-                found = true;
-                food.name = dishesName;
-                food.price = dishesPrice;
-                break;
+                if (dishesId == 0)
+                {
+                    return;
+                }
+                for (Food &food : dishes)
+                {
+                    if (food.id == dishesId)
+                    {
+                        setPosition(70, y + 2 + line);
+                        cout << YELLOW << "Enter new Dish Name: " << RESET;
+                        line++;
+                        cin.ignore();
+                        getline(cin, dishesName);
+                        if (dishesName == "0")
+                        {
+                            return;
+                        }
+                        while (true)
+                        {
+                            setPosition(70, y + 2 + line);
+                            cout << YELLOW << "Enter a Dish Price: " << RESET;
+                            line++;
+                            if (cin >> dishesPrice)
+                            {
+                                if (dishesPrice == 0)
+                                {
+                                    return;
+                                }
+                                break;
+                            }
+                            else
+                            {
+                                cin.clear();
+                                cin.ignore(1000, '\n');
+                                setPosition(70, y + 2 + line);
+                                cout << RED << "Please Enter number only!!" << RESET << endl;
+                                idInputLine = y + 2 + line;
+                                line++;
+                            }
+                        }
+                        cin.ignore();
+                        found = true;
+                        food.name = dishesName;
+                        food.price = dishesPrice;
+                        updated = true;
+                        line++;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "NO ID Found" << RESET << endl;
+                    line++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, y + 2 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
             }
         }
-        if (!found)
-        {
-            setPosition(70, y + 3);
-            cout << RED << "NO ID Found" << RESET << endl;
-            y = y + 2;
-            continue;
-        }
-        else
-        {
-            break;
-        }
     }
-    setPosition(70, y + 6);
+    setPosition(70, idInputLine + 4);
     cout << YELLOW << "PRESS 1 to Confirm Updating OR PRESS 0 to Cancel Updating: " << RESET;
     int confirm;
     cin >> confirm;
     if (confirm == 1)
     {
         ofstream outputfile;
-        outputfile.open("Data/SignatureFood.csv", ios::trunc);
+        outputfile.open("Data/SingleSet.csv", ios::trunc);
         if (!outputfile.is_open())
         {
             setPosition(70, y + 7);
@@ -486,7 +683,7 @@ void UpdateInAppetizer()
                 outputfile << food.id << ',' << food.name << ',' << fixed << setprecision(2) << food.price << endl;
             }
             outputfile.close();
-            setPosition(70, y + 8);
+            setPosition(70, idInputLine + 6);
             cout << GREEN << "Dish Updated Successfully" << RESET << endl;
         }
     }
@@ -494,7 +691,7 @@ void UpdateInAppetizer()
     {
         return;
     }
-    setPosition(70, y + 10);
+    setPosition(70, idInputLine + 8);
     cin.ignore();
     cout << YELLOW << "PRESS Enter to continue..." << RESET << endl;
     cin.get();
@@ -513,6 +710,8 @@ void UpdateInExtraMeat()
     vector<Food> dishes;
     string line;
     getline(file, line);
+    setPosition(67, 3);
+    cout << YELLOW << "Type Number 0 to Exit the Program and Cancel this Menu" << RESET << endl;
     setPosition(92, 5);
     cout << YELLOW << "==== Extra Meat ====" << endl;
     setPosition(70, 6);
@@ -553,49 +752,97 @@ void UpdateInExtraMeat()
     string dishesName;
     double dishesPrice;
     bool found = false;
-    while (true)
+    bool updated = false;
+    int idInputLine = y + 2;
+    while (!updated)
     {
-        setPosition(70, y + 2);
-        cout << YELLOW << "Enter a dishes ID: " << RESET;
-        cin >> dishesId;
-        for (Food &food : dishes)
+        int line = 0;
+        while (true)
         {
-            if (food.id == dishesId)
+            setPosition(70, y + 2 + line);
+            cout << YELLOW << "Enter a dishes ID: " << RESET;
+            idInputLine = y + 2 + line;
+            line++;
+            if (cin >> dishesId)
             {
-                setPosition(70, y + 3);
-                cout << YELLOW << "Enter new Dish Name: " << RESET;
-                cin.ignore();
-                getline(cin, dishesName);
-                setPosition(70, y + 4);
-                cout << YELLOW << "Enter new Dish Price: " << RESET;
-                cin >> dishesPrice;
-                cin.ignore();
-                found = true;
-                food.name = dishesName;
-                food.price = dishesPrice;
-                break;
+                if (dishesId == 0)
+                {
+                    return;
+                }
+                for (Food &food : dishes)
+                {
+                    if (food.id == dishesId)
+                    {
+                        setPosition(70, y + 2 + line);
+                        cout << YELLOW << "Enter new Dish Name: " << RESET;
+                        line++;
+                        cin.ignore();
+                        getline(cin, dishesName);
+                        if (dishesName == "0")
+                        {
+                            return;
+                        }
+                        while (true)
+                        {
+                            setPosition(70, y + 2 + line);
+                            cout << YELLOW << "Enter a Dish Price: " << RESET;
+                            line++;
+                            if (cin >> dishesPrice)
+                            {
+                                if (dishesPrice == 0)
+                                {
+                                    return;
+                                }
+                                break;
+                            }
+                            else
+                            {
+                                cin.clear();
+                                cin.ignore(1000, '\n');
+                                setPosition(70, y + 2 + line);
+                                cout << RED << "Please Enter number only!!" << RESET << endl;
+                                idInputLine = y + 2 + line;
+                                line++;
+                            }
+                        }
+                        cin.ignore();
+                        found = true;
+                        food.name = dishesName;
+                        food.price = dishesPrice;
+                        updated = true;
+                        line++;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "NO ID Found" << RESET << endl;
+                    line++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, y + 2 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
             }
         }
-        if (!found)
-        {
-            setPosition(70, y + 3);
-            cout << RED << "NO ID Found" << RESET << endl;
-            y = y + 2;
-            continue;
-        }
-        else
-        {
-            break;
-        }
     }
-    setPosition(70, y + 6);
+    setPosition(70, idInputLine + 4);
     cout << YELLOW << "PRESS 1 to Confirm Updating OR PRESS 0 to Cancel Updating: " << RESET;
     int confirm;
     cin >> confirm;
     if (confirm == 1)
     {
         ofstream outputfile;
-        outputfile.open("Data/SignatureFood.csv", ios::trunc);
+        outputfile.open("Data/SingleSet.csv", ios::trunc);
         if (!outputfile.is_open())
         {
             setPosition(70, y + 7);
@@ -609,7 +856,7 @@ void UpdateInExtraMeat()
                 outputfile << food.id << ',' << food.name << ',' << fixed << setprecision(2) << food.price << endl;
             }
             outputfile.close();
-            setPosition(70, y + 8);
+            setPosition(70, idInputLine + 6);
             cout << GREEN << "Dish Updated Successfully" << RESET << endl;
         }
     }
@@ -617,7 +864,7 @@ void UpdateInExtraMeat()
     {
         return;
     }
-    setPosition(70, y + 10);
+    setPosition(70, idInputLine + 8);
     cin.ignore();
     cout << YELLOW << "PRESS Enter to continue..." << RESET << endl;
     cin.get();
@@ -636,6 +883,8 @@ void UpdateInComboSet()
     vector<Food> dishes;
     string line;
     getline(file, line);
+    setPosition(67, 3);
+    cout << YELLOW << "Type Number 0 to Exit the Program and Cancel this Menu" << RESET << endl;
     setPosition(87, 5);
     cout << YELLOW << "==== Combo Set Menu ====" << endl;
     setPosition(70, 6);
@@ -676,49 +925,97 @@ void UpdateInComboSet()
     string dishesName;
     double dishesPrice;
     bool found = false;
-    while (true)
+    bool updated = false;
+    int idInputLine = y + 2;
+    while (!updated)
     {
-        setPosition(70, y + 2);
-        cout << YELLOW << "Enter a dishes ID: " << RESET;
-        cin >> dishesId;
-        for (Food &food : dishes)
+        int line = 0;
+        while (true)
         {
-            if (food.id == dishesId)
+            setPosition(70, y + 2 + line);
+            cout << YELLOW << "Enter a dishes ID: " << RESET;
+            idInputLine = y + 2 + line;
+            line++;
+            if (cin >> dishesId)
             {
-                setPosition(70, y + 3);
-                cout << YELLOW << "Enter new Dish Name: " << RESET;
-                cin.ignore();
-                getline(cin, dishesName);
-                setPosition(70, y + 4);
-                cout << YELLOW << "Enter new Dish Price: " << RESET;
-                cin >> dishesPrice;
-                cin.ignore();
-                found = true;
-                food.name = dishesName;
-                food.price = dishesPrice;
-                break;
+                if (dishesId == 0)
+                {
+                    return;
+                }
+                for (Food &food : dishes)
+                {
+                    if (food.id == dishesId)
+                    {
+                        setPosition(70, y + 2 + line);
+                        cout << YELLOW << "Enter new Dish Name: " << RESET;
+                        line++;
+                        cin.ignore();
+                        getline(cin, dishesName);
+                        if (dishesName == "0")
+                        {
+                            return;
+                        }
+                        while (true)
+                        {
+                            setPosition(70, y + 2 + line);
+                            cout << YELLOW << "Enter a Dish Price: " << RESET;
+                            line++;
+                            if (cin >> dishesPrice)
+                            {
+                                if (dishesPrice == 0)
+                                {
+                                    return;
+                                }
+                                break;
+                            }
+                            else
+                            {
+                                cin.clear();
+                                cin.ignore(1000, '\n');
+                                setPosition(70, y + 2 + line);
+                                cout << RED << "Please Enter number only!!" << RESET << endl;
+                                idInputLine = y + 2 + line;
+                                line++;
+                            }
+                        }
+                        cin.ignore();
+                        found = true;
+                        food.name = dishesName;
+                        food.price = dishesPrice;
+                        updated = true;
+                        line++;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "NO ID Found" << RESET << endl;
+                    line++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, y + 2 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
             }
         }
-        if (!found)
-        {
-            setPosition(70, y + 3);
-            cout << RED << "NO ID Found" << RESET << endl;
-            y = y + 2;
-            continue;
-        }
-        else
-        {
-            break;
-        }
     }
-    setPosition(70, y + 6);
+    setPosition(70, idInputLine + 4);
     cout << YELLOW << "PRESS 1 to Confirm Updating OR PRESS 0 to Cancel Updating: " << RESET;
     int confirm;
     cin >> confirm;
     if (confirm == 1)
     {
         ofstream outputfile;
-        outputfile.open("Data/SignatureFood.csv", ios::trunc);
+        outputfile.open("Data/SingleSet.csv", ios::trunc);
         if (!outputfile.is_open())
         {
             setPosition(70, y + 7);
@@ -732,7 +1029,7 @@ void UpdateInComboSet()
                 outputfile << food.id << ',' << food.name << ',' << fixed << setprecision(2) << food.price << endl;
             }
             outputfile.close();
-            setPosition(70, y + 8);
+            setPosition(70, idInputLine + 6);
             cout << GREEN << "Dish Updated Successfully" << RESET << endl;
         }
     }
@@ -740,7 +1037,7 @@ void UpdateInComboSet()
     {
         return;
     }
-    setPosition(70, y + 10);
+    setPosition(70, idInputLine + 8);
     cin.ignore();
     cout << YELLOW << "PRESS Enter to continue..." << RESET << endl;
     cin.get();

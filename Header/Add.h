@@ -15,10 +15,11 @@ void AddInSingleSet()
         return;
     }
 
-    vector<Food> dishes;
+    Queue *queue = EmptyQueue();
     string line;
     getline(file, line);
-
+    setPosition(67, 3);
+    cout << YELLOW << "Type Number 0 to Exit the Program and Cancel this Menu" << RESET << endl;
     setPosition(81, 5);
     cout << YELLOW << "==== Single Set Menu ====" << endl;
     setPosition(70, 6);
@@ -43,84 +44,132 @@ void AddInSingleSet()
         getline(ss, priceStr, ',');
         int id = stoi(idstr);
         double price = stod(priceStr);
-        dishes.push_back({id, name, price});
+        Food food = {id, name, price};
+        enqueue(queue, food);
         setPosition(70, y);
         cout << YELLOW << "| " << RESET << ORANGE << id << RESET;
         setPosition(80, y);
         cout << ORANGE << name << RESET;
-        setPosition(110, y);
-        cout << ORANGE << fixed << setprecision(2) << price << " $" << RESET << YELLOW << " |" << RESET << endl;
+        setPosition(109, y);
+        cout << ORANGE << fixed << setprecision(2) << setw(5) << price << " $" << RESET << YELLOW << " |" << RESET << endl;
         y++;
     }
     setPosition(70, y);
     cout << YELLOW << "------------------------------------------------" << RESET << endl;
 
     int newId;
+    int idInputLine = y + 2;
     while (true)
     {
-        setPosition(70, y + 2);
-        cout << YELLOW << "Add your new Dish (ID): " << RESET;
-        cin >> newId;
-        bool found = false;
-        for (Food food : dishes)
+        int line = 0;
+        while (true)
         {
-            if (newId == food.id)
+            setPosition(70, y + 2 + line);
+            cout << YELLOW << "Add your new Dish (ID): " << RESET;
+            idInputLine = y + 2 + line;
+            line++;
+            if (cin >> newId)
             {
-                setPosition(70, y + 3);
-                cout << RED << "This ID already Exist ! Please enter a new one" << RESET << endl;
-                y = y + 2;
-                found = true;
-                continue;
+                if (newId == 0)
+                {
+                    return;
+                }
+                bool exist = false;
+                Menu *m = queue->front;
+                while (m != nullptr)
+                {
+                    if (newId == m->food.id)
+                    {
+                        exist = true;
+                        break;
+                    }
+                    m = m->next;
+                }
+                if (exist)
+                {
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "This ID already exists! Try again!!." << RESET << endl;
+                    line++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, y + 2 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
             }
         }
-        if (!found)
+        cin.ignore();
+        setPosition(70, idInputLine + 1);
+        cout << YELLOW << "Enter a new Dish name: " << RESET;
+        string dishName;
+        getline(cin, dishName);
+        if (dishName == "0")
         {
-            y = y + 2;
-            break;
-        }
-    }
-
-    setPosition(70, y + 1);
-    cout << YELLOW << "Enter a new Dish name: " << RESET;
-    string dishName;
-    cin.ignore();
-    getline(cin, dishName);
-    setPosition(70, y + 2);
-    cout << YELLOW << "Enter a Dish Price: " << RESET;
-    double dishPrice;
-    cin >> dishPrice;
-    setPosition(70, y + 4);
-    cout << YELLOW << "PRESS 1 to Confirm your ADDING OR PRESS 0 to Cancel your ADDING: ";
-    int verify;
-    cin >> verify;
-
-    if (verify == 1)
-    {
-        setPosition(70, y + 6);
-        cout << GREEN << "New Dish ADDED!!" << RESET << endl;
-        ofstream File;
-        File.open("Data/SingleSet.csv", ios::app);
-        if (!File.is_open())
-        {
-            setPosition(70, 5);
-            cout << RED << "File Cannot Open!" << RESET << endl;
             return;
         }
-        File << newId << ',' << dishName << ',' << dishPrice << endl;
-        File.close();
-    }
-    else if (verify == 0)
-    {
+        double dishPrice;
+        int line1 = 0;
+        while (true)
+        {
+            setPosition(70, idInputLine + 2 + line1);
+            cout << YELLOW << "Enter a Dish Price: " << RESET;
+            line1++;
+            if (cin >> dishPrice)
+            {
+                if (dishPrice == 0)
+                {
+                    return;
+                }
+                break;
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, idInputLine + 2 + line1);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line1++;
+            }
+        }
+        setPosition(70, idInputLine + 3);
+        cout << YELLOW << "PRESS 1 to Confirm your ADDING OR PRESS 0 to Cancel your ADDING: ";
+        int verify;
+        cin >> verify;
+
+        if (verify == 1)
+        {
+            setPosition(70, idInputLine + 4);
+            cout << GREEN << "New Dish ADDED!!" << RESET << endl;
+            ofstream File;
+            File.open("Data/SingleSet.csv", ios::app);
+            if (!File.is_open())
+            {
+                setPosition(70, 5);
+                cout << RED << "File Cannot Open!" << RESET << endl;
+                return;
+            }
+            File << newId << ',' << dishName << ',' << dishPrice << endl;
+            File.close();
+        }
+        else if (verify == 0)
+        {
+            return;
+        }
+        setPosition(70, idInputLine + 6);
+        cout << YELLOW << "Press ENTER to continue..." << RESET << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
         return;
     }
-    setPosition(70, y + 8);
-    cout << YELLOW << "Press ENTER to continue..." << RESET << endl;
-    cin.ignore();
-    cin.get();
-    system("cls");
-    return;
 }
-
 void AddInSignature()
 {
     ifstream file;
@@ -129,9 +178,11 @@ void AddInSignature()
     {
         return;
     }
-    vector<Food> dishes;
+    Queue *queue = EmptyQueue();
     string line;
     getline(file, line);
+    setPosition(67, 3);
+    cout << YELLOW << "Type Number 0 to Exit the Program and Cancel this Menu" << RESET << endl;
     setPosition(85, 5);
     cout << YELLOW << "==== Signature Set Menu ====" << endl;
     setPosition(70, 6);
@@ -156,82 +207,131 @@ void AddInSignature()
         getline(ss, priceStr, ',');
         int id = stoi(idstr);
         double price = stod(priceStr);
-        dishes.push_back({id, name, price});
+        Food food = {id, name, price};
+        enqueue(queue, food);
         setPosition(70, y);
         cout << YELLOW << "| " << RESET << ORANGE << id << RESET;
         setPosition(80, y);
         cout << ORANGE << name << RESET;
-        setPosition(120, y);
-        cout << ORANGE << fixed << setprecision(2) << price << " $" << RESET << YELLOW << " |" << RESET << endl;
+        setPosition(118, y);
+        cout << ORANGE << fixed << setprecision(2) << setw(5) << price << " $" << RESET << YELLOW << " |" << RESET << endl;
         y++;
     }
     setPosition(70, y);
     cout << YELLOW << "----------------------------------------------------------" << RESET << endl;
 
     int newId;
+    int idInputLine = y + 2;
     while (true)
     {
-        setPosition(70, y + 2);
-        cout << YELLOW << "Add your new Dish (ID): " << RESET;
-        cin >> newId;
-        bool found = false;
-        for (Food food : dishes)
+        int line = 0;
+        while (true)
         {
-            if (newId == food.id)
+            setPosition(70, y + 2 + line);
+            cout << YELLOW << "Add your new Dish (ID): " << RESET;
+            idInputLine = y + 2 + line;
+            line++;
+            if (cin >> newId)
             {
-                setPosition(70, y + 3);
-                cout << RED << "This ID already Exist ! Please enter a new one" << RESET << endl;
-                y = y + 2;
-                found = true;
-                continue;
+                if (newId == 0)
+                {
+                    return;
+                }
+                bool exist = false;
+                Menu *m = queue->front;
+                while (m != nullptr)
+                {
+                    if (newId == m->food.id)
+                    {
+                        exist = true;
+                        break;
+                    }
+                    m = m->next;
+                }
+                if (exist)
+                {
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "This ID already exists! Try again!!." << RESET << endl;
+                    line++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, y + 2 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
             }
         }
-        if (!found)
+        cin.ignore();
+        setPosition(70, idInputLine + 1);
+        cout << YELLOW << "Enter a new Dish name: " << RESET;
+        string dishName;
+        getline(cin, dishName);
+        if (dishName == "0")
         {
-            y = y + 2;
-            break;
-        }
-    }
-
-    setPosition(70, y + 1);
-    cout << YELLOW << "Enter a new Dish name: " << RESET;
-    string dishName;
-    cin.ignore();
-    getline(cin, dishName);
-    setPosition(70, y + 2);
-    cout << YELLOW << "Enter a Dish Price: " << RESET;
-    double dishPrice;
-    cin >> dishPrice;
-    setPosition(70, y + 4);
-    cout << YELLOW << "PRESS 1 to Confirm your ADDING OR PRESS 0 to Cancel your ADDING: ";
-    int verify;
-    cin >> verify;
-
-    if (verify == 1)
-    {
-        setPosition(70, y + 6);
-        cout << GREEN << "New Dish ADDED!!" << RESET << endl;
-        ofstream File;
-        File.open("Data/SignatureFood.csv", ios::app);
-        if (!File.is_open())
-        {
-            setPosition(70, 5);
-            cout << RED << "File Cannot Open!" << RESET << endl;
             return;
         }
-        File << newId << ',' << dishName << ',' << dishPrice << endl;
-        File.close();
-    }
-    else if (verify == 0)
-    {
+        double dishPrice;
+        int line1 = 0;
+        while (true)
+        {
+            setPosition(70, idInputLine + 2 + line1);
+            cout << YELLOW << "Enter a Dish Price: " << RESET;
+            line1++;
+            if (cin >> dishPrice)
+            {
+                if (dishPrice == 0)
+                {
+                    return;
+                }
+                break;
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, idInputLine + 2 + line1);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line1++;
+            }
+        }
+        setPosition(70, idInputLine + 3);
+        cout << YELLOW << "PRESS 1 to Confirm your ADDING OR PRESS 0 to Cancel your ADDING: ";
+        int verify;
+        cin >> verify;
+
+        if (verify == 1)
+        {
+            setPosition(70, idInputLine + 4);
+            cout << GREEN << "New Dish ADDED!!" << RESET << endl;
+            ofstream File;
+            File.open("Data/SignatureFood.csv", ios::app);
+            if (!File.is_open())
+            {
+                setPosition(70, 5);
+                cout << RED << "File Cannot Open!" << RESET << endl;
+                return;
+            }
+            File << newId << ',' << dishName << ',' << dishPrice << endl;
+            File.close();
+        }
+        else if (verify == 0)
+        {
+            return;
+        }
+        setPosition(70, idInputLine + 6);
+        cout << YELLOW << "Press ENTER to continue..." << RESET << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
         return;
     }
-    setPosition(70, y + 8);
-    cout << YELLOW << "Press ENTER to continue..." << RESET << endl;
-    cin.ignore();
-    cin.get();
-    system("cls");
-    return;
 }
 
 void AddInFried()
@@ -242,9 +342,11 @@ void AddInFried()
     {
         return;
     }
-    vector<Food> dishes;
+    Queue *queue = EmptyQueue();
     string line;
     getline(file, line);
+    setPosition(67, 3);
+    cout << YELLOW << "Type Number 0 to Exit the Program and Cancel this Menu" << RESET << endl;
     setPosition(90, 5);
     cout << YELLOW << "==== Fried Set Menu ====" << endl;
     setPosition(70, 6);
@@ -269,7 +371,8 @@ void AddInFried()
         getline(ss, priceStr, ',');
         int id = stoi(idstr);
         double price = stod(priceStr);
-        dishes.push_back({id, name, price});
+        Food food = {id, name, price};
+        enqueue(queue, food);
         setPosition(70, y);
         cout << YELLOW << "| " << RESET << ORANGE << id << RESET;
         setPosition(80, y);
@@ -282,69 +385,117 @@ void AddInFried()
     cout << YELLOW << "---------------------------------------------------------------" << RESET << endl;
 
     int newId;
+    int idInputLine = y + 2;
     while (true)
     {
-        setPosition(70, y + 2);
-        cout << YELLOW << "Add your new Dish (ID): " << RESET;
-        cin >> newId;
-        bool found = false;
-        for (Food food : dishes)
+        int line = 0;
+        while (true)
         {
-            if (newId == food.id)
+            setPosition(70, y + 2 + line);
+            cout << YELLOW << "Add your new Dish (ID): " << RESET;
+            idInputLine = y + 2 + line;
+            line++;
+            if (cin >> newId)
             {
-                setPosition(70, y + 3);
-                cout << RED << "This ID already Exist ! Please enter a new one" << RESET << endl;
-                y = y + 2;
-                found = true;
-                continue;
+                if (newId == 0)
+                {
+                    return;
+                }
+                bool exist = false;
+                Menu *m = queue->front;
+                while (m != nullptr)
+                {
+                    if (newId == m->food.id)
+                    {
+                        exist = true;
+                        break;
+                    }
+                    m = m->next;
+                }
+                if (exist)
+                {
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "This ID already exists! Try again!!." << RESET << endl;
+                    line++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, y + 2 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
             }
         }
-        if (!found)
+        cin.ignore();
+        setPosition(70, idInputLine + 1);
+        cout << YELLOW << "Enter a new Dish name: " << RESET;
+        string dishName;
+        getline(cin, dishName);
+        if (dishName == "0")
         {
-            y = y + 2;
-            break;
-        }
-    }
-
-    setPosition(70, y + 1);
-    cout << YELLOW << "Enter a new Dish name: " << RESET;
-    string dishName;
-    cin.ignore();
-    getline(cin, dishName);
-    setPosition(70, y + 2);
-    cout << YELLOW << "Enter a Dish Price: " << RESET;
-    double dishPrice;
-    cin >> dishPrice;
-    setPosition(70, y + 4);
-    cout << YELLOW << "PRESS 1 to Confirm your ADDING OR PRESS 0 to Cancel your ADDING: ";
-    int verify;
-    cin >> verify;
-
-    if (verify == 1)
-    {
-        setPosition(70, y + 6);
-        cout << GREEN << "New Dish ADDED!!" << RESET << endl;
-        ofstream File;
-        File.open("Data/Fried.csv", ios::app);
-        if (!File.is_open())
-        {
-            setPosition(70, 5);
-            cout << RED << "File Cannot Open!" << RESET << endl;
             return;
         }
-        File << newId << ',' << dishName << ',' << dishPrice << endl;
-        File.close();
-    }
-    else if (verify == 0)
-    {
+        double dishPrice;
+        int line1 = 0;
+        while (true)
+        {
+            setPosition(70, idInputLine + 2 + line1);
+            cout << YELLOW << "Enter a Dish Price: " << RESET;
+            line1++;
+            if (cin >> dishPrice)
+            {
+                if (dishPrice == 0)
+                {
+                    return;
+                }
+                break;
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, idInputLine + 2 + line1);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line1++;
+            }
+        }
+        setPosition(70, idInputLine + 3);
+        cout << YELLOW << "PRESS 1 to Confirm your ADDING OR PRESS 0 to Cancel your ADDING: ";
+        int verify;
+        cin >> verify;
+
+        if (verify == 1)
+        {
+            setPosition(70, idInputLine + 4);
+            cout << GREEN << "New Dish ADDED!!" << RESET << endl;
+            ofstream File;
+            File.open("Data/Fried.csv", ios::app);
+            if (!File.is_open())
+            {
+                setPosition(70, 5);
+                cout << RED << "File Cannot Open!" << RESET << endl;
+                return;
+            }
+            File << newId << ',' << dishName << ',' << dishPrice << endl;
+            File.close();
+        }
+        else if (verify == 0)
+        {
+            return;
+        }
+        setPosition(70, idInputLine + 6);
+        cout << YELLOW << "Press ENTER to continue..." << RESET << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
         return;
     }
-    setPosition(70, y + 8);
-    cout << YELLOW << "Press ENTER to continue..." << RESET << endl;
-    cin.ignore();
-    cin.get();
-    system("cls");
-    return;
 }
 
 void AddInAppetizer()
@@ -355,9 +506,11 @@ void AddInAppetizer()
     {
         return;
     }
-    vector<Food> dishes;
+    Queue *queue = EmptyQueue();
     string line;
     getline(file, line);
+    setPosition(67, 3);
+    cout << YELLOW << "Type Number 0 to Exit the Program and Cancel this Menu" << RESET << endl;
     setPosition(87, 5);
     cout << YELLOW << "==== Appetizer Set Menu ====" << endl;
     setPosition(70, 6);
@@ -382,7 +535,8 @@ void AddInAppetizer()
         getline(ss, priceStr, ',');
         int id = stoi(idstr);
         double price = stod(priceStr);
-        dishes.push_back({id, name, price});
+        Food food = {id, name, price};
+        enqueue(queue, food);
         setPosition(70, y);
         cout << YELLOW << "| " << RESET << ORANGE << id << RESET;
         setPosition(80, y);
@@ -395,69 +549,117 @@ void AddInAppetizer()
     cout << YELLOW << "---------------------------------------------------------------" << RESET << endl;
 
     int newId;
+    int idInputLine = y + 2;
     while (true)
     {
-        setPosition(70, y + 2);
-        cout << YELLOW << "Add your new Dish (ID): " << RESET;
-        cin >> newId;
-        bool found = false;
-        for (Food food : dishes)
+        int line = 0;
+        while (true)
         {
-            if (newId == food.id)
+            setPosition(70, y + 2 + line);
+            cout << YELLOW << "Add your new Dish (ID): " << RESET;
+            idInputLine = y + 2 + line;
+            line++;
+            if (cin >> newId)
             {
-                setPosition(70, y + 3);
-                cout << RED << "This ID already Exist ! Please enter a new one" << RESET << endl;
-                y = y + 2;
-                found = true;
-                continue;
+                if (newId == 0)
+                {
+                    return;
+                }
+                bool exist = false;
+                Menu *m = queue->front;
+                while (m != nullptr)
+                {
+                    if (newId == m->food.id)
+                    {
+                        exist = true;
+                        break;
+                    }
+                    m = m->next;
+                }
+                if (exist)
+                {
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "This ID already exists! Try again!!." << RESET << endl;
+                    line++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, y + 2 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
             }
         }
-        if (!found)
+        cin.ignore();
+        setPosition(70, idInputLine + 1);
+        cout << YELLOW << "Enter a new Dish name: " << RESET;
+        string dishName;
+        getline(cin, dishName);
+        if (dishName == "0")
         {
-            y = y + 2;
-            break;
-        }
-    }
-
-    setPosition(70, y + 1);
-    cout << YELLOW << "Enter a new Dish name: " << RESET;
-    string dishName;
-    cin.ignore();
-    getline(cin, dishName);
-    setPosition(70, y + 2);
-    cout << YELLOW << "Enter a Dish Price: " << RESET;
-    double dishPrice;
-    cin >> dishPrice;
-    setPosition(70, y + 4);
-    cout << YELLOW << "PRESS 1 to Confirm your ADDING OR PRESS 0 to Cancel your ADDING: ";
-    int verify;
-    cin >> verify;
-
-    if (verify == 1)
-    {
-        setPosition(70, y + 6);
-        cout << GREEN << "New Dish ADDED!!" << RESET << endl;
-        ofstream File;
-        File.open("Data/Appetizer.csv", ios::app);
-        if (!File.is_open())
-        {
-            setPosition(70, 5);
-            cout << RED << "File Cannot Open!" << RESET << endl;
             return;
         }
-        File << newId << ',' << dishName << ',' << dishPrice << endl;
-        File.close();
-    }
-    else if (verify == 0)
-    {
+        double dishPrice;
+        int line1 = 0;
+        while (true)
+        {
+            setPosition(70, idInputLine + 2 + line1);
+            cout << YELLOW << "Enter a Dish Price: " << RESET;
+            line1++;
+            if (cin >> dishPrice)
+            {
+                if (dishPrice == 0)
+                {
+                    return;
+                }
+                break;
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, idInputLine + 2 + line1);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line1++;
+            }
+        }
+        setPosition(70, idInputLine + 3);
+        cout << YELLOW << "PRESS 1 to Confirm your ADDING OR PRESS 0 to Cancel your ADDING: ";
+        int verify;
+        cin >> verify;
+
+        if (verify == 1)
+        {
+            setPosition(70, idInputLine + 4);
+            cout << GREEN << "New Dish ADDED!!" << RESET << endl;
+            ofstream File;
+            File.open("Data/Appetizer.csv", ios::app);
+            if (!File.is_open())
+            {
+                setPosition(70, 5);
+                cout << RED << "File Cannot Open!" << RESET << endl;
+                return;
+            }
+            File << newId << ',' << dishName << ',' << dishPrice << endl;
+            File.close();
+        }
+        else if (verify == 0)
+        {
+            return;
+        }
+        setPosition(70, idInputLine + 6);
+        cout << YELLOW << "Press ENTER to continue..." << RESET << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
         return;
     }
-    setPosition(70, y + 8);
-    cout << YELLOW << "Press ENTER to continue..." << RESET << endl;
-    cin.ignore();
-    cin.get();
-    system("cls");
-    return;
 }
 
 void AddInCombo()
@@ -468,9 +670,11 @@ void AddInCombo()
     {
         return;
     }
-    vector<Food> dishes;
+    Queue *queue = EmptyQueue();
     string line;
     getline(file, line);
+    setPosition(67, 3);
+    cout << YELLOW << "Type Number 0 to Exit the Program and Cancel this Menu" << RESET << endl;
     setPosition(87, 5);
     cout << YELLOW << "==== Combo Set Menu ====" << endl;
     setPosition(70, 6);
@@ -495,7 +699,8 @@ void AddInCombo()
         getline(ss, priceStr, ',');
         int id = stoi(idstr);
         double price = stod(priceStr);
-        dishes.push_back({id, name, price});
+        Food food = {id, name, price};
+        enqueue(queue, food);
         setPosition(70, y);
         cout << YELLOW << "| " << RESET << ORANGE << id << RESET;
         setPosition(80, y);
@@ -508,69 +713,115 @@ void AddInCombo()
     cout << YELLOW << "---------------------------------------------------------------" << RESET << endl;
 
     int newId;
+    int idInputLine = y + 2;
     while (true)
     {
-        setPosition(70, y + 2);
-        cout << YELLOW << "Add your new Dish (ID): " << RESET;
-        cin >> newId;
-        bool found = false;
-        for (Food food : dishes)
+        int line = 0;
+        while (true)
         {
-            if (newId == food.id)
+            setPosition(70, y + 2 + line);
+            cout << YELLOW << "Add your new Dish (ID): " << RESET;
+            idInputLine = y + 2 + line;
+            line++;
+            if (cin >> newId)
             {
-                setPosition(70, y + 3);
-                cout << RED << "This ID already Exist ! Please enter a new one" << RESET << endl;
-                y = y + 2;
-                found = true;
-                continue;
+                if (newId == 0)
+                {
+                    return;
+                }
+                bool exist = false;
+                Menu *m = queue->front;
+                while (m != nullptr)
+                {
+                    if (newId == m->food.id)
+                    {
+                        exist = true;
+                        break;
+                    }
+                    m = m->next;
+                }
+                if (exist)
+                {
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "This ID already exists! Try again!!." << RESET << endl;
+                    line++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, y + 2 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
             }
         }
-        if (!found)
+        cin.ignore();
+        setPosition(70, idInputLine + 1);
+        cout << YELLOW << "Enter a new Dish name: " << RESET;
+        string dishName;
+        getline(cin, dishName);
+        if (dishName == "0")
         {
-            y = y + 2;
-            break;
-        }
-    }
-
-    setPosition(70, y + 1);
-    cout << YELLOW << "Enter a new Dish name: " << RESET;
-    string dishName;
-    cin.ignore();
-    getline(cin, dishName);
-    setPosition(70, y + 2);
-    cout << YELLOW << "Enter a Dish Price: " << RESET;
-    double dishPrice;
-    cin >> dishPrice;
-    setPosition(70, y + 4);
-    cout << YELLOW << "PRESS 1 to Confirm your ADDING OR PRESS 0 to Cancel your ADDING: ";
-    int verify;
-    cin >> verify;
-
-    if (verify == 1)
-    {
-        setPosition(70, y + 6);
-        cout << GREEN << "New Dish ADDED!!" << RESET << endl;
-        ofstream File;
-        File.open("Data/ComboSet.csv", ios::app);
-        if (!File.is_open())
-        {
-            setPosition(70, 5);
-            cout << RED << "File Cannot Open!" << RESET << endl;
             return;
         }
-        File << newId << ',' << dishName << ',' << dishPrice << endl;
-        File.close();
-    }
-    else if (verify == 0)
-    {
+        double dishPrice;
+        int line1 = 0;
+        while (true)
+        {
+            setPosition(70, idInputLine + 2 + line1);
+            cout << YELLOW << "Enter a Dish Price: " << RESET;
+            line1++;
+            if (cin >> dishPrice)
+            {
+                if (dishPrice == 0)
+                    ;
+                break;
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, idInputLine + 2 + line1);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line1++;
+            }
+        }
+        setPosition(70, idInputLine + 3);
+        cout << YELLOW << "PRESS 1 to Confirm your ADDING OR PRESS 0 to Cancel your ADDING: ";
+        int verify;
+        cin >> verify;
+
+        if (verify == 1)
+        {
+            setPosition(70, idInputLine + 4);
+            cout << GREEN << "New Dish ADDED!!" << RESET << endl;
+            ofstream File;
+            File.open("Data/ComboSet.csv", ios::app);
+            if (!File.is_open())
+            {
+                setPosition(70, 5);
+                cout << RED << "File Cannot Open!" << RESET << endl;
+                return;
+            }
+            File << newId << ',' << dishName << ',' << dishPrice << endl;
+            File.close();
+        }
+        else if (verify == 0)
+        {
+            return;
+        }
+        setPosition(70, idInputLine + 6);
+        cout << YELLOW << "Press ENTER to continue..." << RESET << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
         return;
     }
-    setPosition(70, y + 8);
-    cout << YELLOW << "Press ENTER to continue..." << RESET << endl;
-    cin.ignore();
-    cin.get();
-    system("cls");
-    return;
 }
 
 void AddInExtraMeat()
@@ -581,9 +832,11 @@ void AddInExtraMeat()
     {
         return;
     }
-    vector<Food> dishes;
+    Queue *queue = EmptyQueue();
     string line;
     getline(file, line);
+    setPosition(67, 3);
+    cout << YELLOW << "Type Number 0 to Exit the Program and Cancel this Menu" << RESET << endl;
     setPosition(92, 5);
     cout << YELLOW << "==== Extra Meat ====" << endl;
     setPosition(70, 6);
@@ -608,7 +861,8 @@ void AddInExtraMeat()
         getline(ss, priceStr, ',');
         int id = stoi(idstr);
         double price = stod(priceStr);
-        dishes.push_back({id, name, price});
+        Food food = {id, name, price};
+        enqueue(queue, food);
         setPosition(70, y);
         cout << YELLOW << "| " << RESET << ORANGE << id << RESET;
         setPosition(90, y);
@@ -621,68 +875,116 @@ void AddInExtraMeat()
     cout << YELLOW << "---------------------------------------------------------------" << RESET << endl;
 
     int newId;
+    int idInputLine = y + 2;
     while (true)
     {
-        setPosition(70, y + 2);
-        cout << YELLOW << "Add your new Dish (ID): " << RESET;
-        cin >> newId;
-        bool found = false;
-        for (Food food : dishes)
+        int line = 0;
+        while (true)
         {
-            if (newId == food.id)
+            setPosition(70, y + 2 + line);
+            cout << YELLOW << "Add your new Dish (ID): " << RESET;
+            idInputLine = y + 2 + line;
+            line++;
+            if (cin >> newId)
             {
-                setPosition(70, y + 3);
-                cout << RED << "This ID already Exist ! Please enter a new one" << RESET << endl;
-                y = y + 2;
-                found = true;
-                continue;
+                if (newId == 0)
+                {
+                    return;
+                }
+                bool exist = false;
+                Menu *m = queue->front;
+                while (m != nullptr)
+                {
+                    if (newId == m->food.id)
+                    {
+                        exist = true;
+                        break;
+                    }
+                    m = m->next;
+                }
+                if (exist)
+                {
+                    setPosition(70, y + 2 + line);
+                    cout << RED << "This ID already exists! Try again!!." << RESET << endl;
+                    line++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, y + 2 + line);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line++;
             }
         }
-        if (!found)
+        cin.ignore();
+        setPosition(70, idInputLine + 1);
+        cout << YELLOW << "Enter a new Dish name: " << RESET;
+        string dishName;
+        getline(cin, dishName);
+        if (dishName == "0")
         {
-            y = y + 2;
-            break;
-        }
-    }
-
-    setPosition(70, y + 1);
-    cout << YELLOW << "Enter a new Dish name: " << RESET;
-    string dishName;
-    cin.ignore();
-    getline(cin, dishName);
-    setPosition(70, y + 2);
-    cout << YELLOW << "Enter a Dish Price: " << RESET;
-    double dishPrice;
-    cin >> dishPrice;
-    setPosition(70, y + 4);
-    cout << YELLOW << "PRESS 1 to Confirm your ADDING OR PRESS 0 to Cancel your ADDING: ";
-    int verify;
-    cin >> verify;
-
-    if (verify == 1)
-    {
-        setPosition(70, y + 6);
-        cout << GREEN << "New Dish ADDED!!" << RESET << endl;
-        ofstream File;
-        File.open("Data/Extra.csv", ios::app);
-        if (!File.is_open())
-        {
-            setPosition(70, 5);
-            cout << RED << "File Cannot Open!" << RESET << endl;
             return;
         }
-        File << newId << ',' << dishName << ',' << dishPrice << endl;
-        File.close();
-    }
-    else if (verify == 0)
-    {
+        double dishPrice;
+        int line1 = 0;
+        while (true)
+        {
+            setPosition(70, idInputLine + 2 + line1);
+            cout << YELLOW << "Enter a Dish Price: " << RESET;
+            line1++;
+            if (cin >> dishPrice)
+            {
+                if (dishPrice == 0)
+                {
+                    return;
+                }
+                break;
+            }
+            else
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                setPosition(70, idInputLine + 2 + line1);
+                cout << RED << "Please Enter number only!!" << RESET << endl;
+                line1++;
+            }
+        }
+        setPosition(70, idInputLine + 3);
+        cout << YELLOW << "PRESS 1 to Confirm your ADDING OR PRESS 0 to Cancel your ADDING: ";
+        int verify;
+        cin >> verify;
+
+        if (verify == 1)
+        {
+            setPosition(70, idInputLine + 4);
+            cout << GREEN << "New Dish ADDED!!" << RESET << endl;
+            ofstream File;
+            File.open("Data/Extra.csv", ios::app);
+            if (!File.is_open())
+            {
+                setPosition(70, 5);
+                cout << RED << "File Cannot Open!" << RESET << endl;
+                return;
+            }
+            File << newId << ',' << dishName << ',' << dishPrice << endl;
+            File.close();
+        }
+        else if (verify == 0)
+        {
+            return;
+        }
+        setPosition(70, idInputLine + 6);
+        cout << YELLOW << "Press ENTER to continue..." << RESET << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
         return;
     }
-    setPosition(70, y + 8);
-    cout << YELLOW << "Press ENTER to continue..." << RESET << endl;
-    cin.ignore();
-    cin.get();
-    system("cls");
-    return;
 }
 #endif
