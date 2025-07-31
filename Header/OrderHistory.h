@@ -8,11 +8,6 @@ using namespace std;
 
 void Order(List *ls)
 {
-
-    if (ls->n > 0)
-    {
-        printed = false;
-    }
     if (!printed)
     {
         system("cls");
@@ -56,6 +51,7 @@ void Order(List *ls)
                     setPosition(70, y + 9);
                     cout << GREEN << "ID: " << id << " DELETED SUCCESSFULLY" << RESET << endl;
                     attempt += 2;
+                    printed = false;
                     break;
                 }
             }
@@ -93,6 +89,7 @@ void Order(List *ls)
                     {
                         setPosition(70, y + 10);
                         cout << GREEN << "Modify Successfully" << RESET << endl;
+                        printed = false;
                         attempt += 2;
                     }
                     else

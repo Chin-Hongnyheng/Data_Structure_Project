@@ -170,6 +170,7 @@ void SingleSet()
             {
                 if (num == 1)
                 {
+                    printed = false;
                     return;
                 }
                 else
@@ -359,6 +360,7 @@ void SignatureFood()
             {
                 if (num == 1)
                 {
+                    printed = false;
                     return;
                 }
                 else
@@ -548,6 +550,7 @@ void Fried()
             {
                 if (num == 1)
                 {
+                    printed = false;
                     return;
                 }
                 else
@@ -649,6 +652,7 @@ void Appetizer()
             {
                 if (order == 0)
                 {
+                    printed = false;
                     return;
                 }
                 bool found = false;
@@ -840,6 +844,7 @@ void ExtraMeat()
                 {
                     if (order == 0)
                     {
+                        printed = false;
                         return;
                     }
                     bool found = false;
