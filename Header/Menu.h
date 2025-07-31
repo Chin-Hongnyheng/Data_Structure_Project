@@ -56,8 +56,8 @@ void SingleSet()
         cout << YELLOW << "| " << RESET << ORANGE << id << RESET;
         setPosition(80, y);
         cout << ORANGE << name << RESET;
-        setPosition(110, y);
-        cout << ORANGE << fixed << setprecision(2) << price << " $" << RESET << YELLOW << " |" << RESET << endl;
+        setPosition(109, y);
+        cout << ORANGE << fixed << setprecision(2) << setw(5) << price << " $" << RESET << YELLOW << " |" << RESET << endl;
         y++;
     }
     setPosition(70, y);
@@ -246,7 +246,7 @@ void SignatureFood()
         setPosition(80, y);
         cout << ORANGE << name << RESET;
         setPosition(120, y);
-        cout << ORANGE << fixed << setprecision(2) << price << " $" << RESET << YELLOW << " |" << RESET << endl;
+        cout << ORANGE << fixed << setprecision(2) << setw(5) << price << " $" << RESET << YELLOW << " |" << RESET << endl;
         y++;
     }
     setPosition(70, y);
