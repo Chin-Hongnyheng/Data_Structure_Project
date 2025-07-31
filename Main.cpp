@@ -233,6 +233,9 @@ int main()
                                     bool addLoop = true;
                                     while (addLoop)
                                     {
+                                        system("cls");
+                                        setPosition(80, 5);
+                                        cout << GREEN << "==== ADDITION ====" << RESET << endl;
                                         displayMenu();
                                         int opt5;
                                         int line = 0;
@@ -298,6 +301,9 @@ int main()
                                     bool menuLoop = true;
                                     while (menuLoop)
                                     {
+                                        system("cls");
+                                        setPosition(80, 5);
+                                        cout << GREEN << "==== MENU ====" << RESET << endl;
                                         displayMenu();
                                         int opt4;
                                         int line = 0;
@@ -363,6 +369,9 @@ int main()
                                     bool UpdateLoop = true;
                                     while (UpdateLoop)
                                     {
+                                        system("cls");
+                                        setPosition(80, 5);
+                                        cout << GREEN << "==== UPDATE ====" << RESET << endl;
                                         displayMenu();
                                         int opt5;
                                         int line = 0;
@@ -436,6 +445,9 @@ int main()
                                     bool deleteLoop = true;
                                     while (deleteLoop)
                                     {
+                                        system("cls");
+                                        setPosition(80, 5);
+                                        cout << GREEN << "==== DELETION ====" << RESET << endl;
                                         displayMenu();
                                         setPosition(80, 15);
                                         cout << GREEN << "Choose an option: " << RESET;

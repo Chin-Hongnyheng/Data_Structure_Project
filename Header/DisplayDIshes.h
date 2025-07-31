@@ -313,9 +313,6 @@ void displayComboSet()
 
 void displayMenu()
 {
-    system("cls");
-    setPosition(80, 5);
-    cout << GREEN << "==== MENU ====" << RESET << endl;
     setPosition(80, 7);
     cout << GREEN << "1. Single Set" << RESET << endl;
     setPosition(80, 8);
