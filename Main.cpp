@@ -531,6 +531,7 @@ int main()
                     case 4:
                         Exitloop = false;
                         SaveHistory(list);
+                        delete_all(list);
                         system("cls");
                         break;
                     default:
