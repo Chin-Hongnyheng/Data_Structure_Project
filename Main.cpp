@@ -74,7 +74,7 @@ int main()
                     setPosition(80, 8);
                     cout << GREEN << "2. Admin Panel" << RESET << endl;
                     setPosition(80, 9);
-                    cout << GREEN << "3. Order History" << RESET << endl;
+                    cout << GREEN << "3. Cart" << RESET << endl;
                     setPosition(80, 10);
                     cout << GREEN << "4. Log Out" << RESET << endl;
                     int opt1;
