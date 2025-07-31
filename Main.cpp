@@ -530,6 +530,7 @@ int main()
                         break;
                     case 4:
                         Exitloop = false;
+                        SaveHistory(list);
                         system("cls");
                         break;
                     default:

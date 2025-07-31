@@ -8,7 +8,7 @@ string Name;
 int ReceiptPaper(List *ls)
 {
     // Global boolean from Design.h
-    printed = true;
+    printed = false;
     setPosition(82, 5);
     cout << GREEN << ":::: BAYMAK Restaurant ::::" << endl;
     setPosition(70, 6);

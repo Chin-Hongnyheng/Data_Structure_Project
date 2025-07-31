@@ -179,7 +179,7 @@ void SingleSet()
                     printing();
                     system("cls");
                     Display(list);
-                    SaveHistory(list);
+                    // SaveHistory(list);
                     break;
                 }
             }
@@ -369,7 +369,7 @@ void SignatureFood()
                     printing();
                     system("cls");
                     Display(list);
-                    SaveHistory(list);
+                    // SaveHistory(list);
                     break;
                 }
             }
@@ -559,7 +559,7 @@ void Fried()
                     printing();
                     system("cls");
                     Display(list);
-                    SaveHistory(list);
+                    // SaveHistory(list);
                     break;
                 }
             }
@@ -749,7 +749,7 @@ void Appetizer()
                     printing();
                     system("cls");
                     Display(list);
-                    SaveHistory(list);
+                    // SaveHistory(list);
                     break;
                 }
             }
@@ -844,7 +844,6 @@ void ExtraMeat()
                 {
                     if (order == 0)
                     {
-                        printed = false;
                         return;
                     }
                     bool found = false;
@@ -933,6 +932,7 @@ void ExtraMeat()
                 {
                     if (num == 1)
                     {
+                        printed = false;
                         return;
                     }
                     else
@@ -941,7 +941,7 @@ void ExtraMeat()
                         printing();
                         system("cls");
                         Display(list);
-                        SaveHistory(list);
+                        // SaveHistory(list);
                         break;
                     }
                 }
@@ -1129,7 +1129,7 @@ void ComboSet()
                     printing();
                     system("cls");
                     Display(list);
-                    SaveHistory(list);
+                    // SaveHistory(list);
                     break;
                 }
             }
