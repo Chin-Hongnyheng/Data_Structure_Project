@@ -21,6 +21,8 @@ void Order(List *ls)
         setPosition(70, y + 4);
         cout << YELLOW << "PRESS 4 To Confirm Your Order OR PRESS Any Number To Cancel Your Whole Order" << RESET << endl;
         setPosition(70, y + 5);
+        cout << YELLOW << "PRESS 0 To Go Back" << RESET << endl;
+        setPosition(70, y + 6);
         cout << YELLOW << "Enter an option: " << RESET;
         int opt;
         cin >> opt;
@@ -120,6 +122,11 @@ void Order(List *ls)
             cout << YELLOW << "Press ENTER to continue..." << RESET << endl;
             cin.ignore();
             cin.get();
+            system("cls");
+            return;
+        }
+        else if (opt == 0)
+        {
             system("cls");
             return;
         }

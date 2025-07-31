@@ -545,14 +545,6 @@ int main()
                     }
                 }
             }
-            else
-            {
-                setPosition(80, 5);
-                cout << RED << "Incorrect Input!! Please try again!!" << endl;
-                cin.ignore();
-                cin.get();
-                system("cls");
-            }
         }
         break;
         case 2:
