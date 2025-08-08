@@ -6,6 +6,7 @@
 #ifndef ADD_H
 #define ADD_H
 
+// Using queue to pass all those data and then we can modify it (prevent duplicate Id);
 void AddInSingleSet()
 {
     ifstream file;

@@ -26,7 +26,13 @@ void DisplayAboutUs()
     setPosition(0, 16);
     cout << "Contribution: " << endl;
     setPosition(0, 17);
-    cout << "Developer: Chin Hongnyheng" << endl;
+    cout << "Develop Admin Panel: Chin Hongnyheng" << endl;
+    setPosition(0, 18);
+    cout << "Cart Developer: Noch MunnyRatanak" << endl;
+    setPosition(0, 19);
+    cout << "Menu : Vireak Rith" << endl;
+    setPosition(0, 20);
+    cout << "Registration: Pon PolPrachnha" << endl;
     setPosition(0, 23);
     cout << YELLOW << "PRESS Enter to continue..." << RESET << endl;
     cin.ignore();

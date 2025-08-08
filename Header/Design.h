@@ -16,6 +16,7 @@ using namespace std;
 bool printed = true;
 
 // for showing the menu
+// for Adding new dishes
 struct Food
 {
     int id;
@@ -44,6 +45,7 @@ Queue *EmptyQueue()
     q->rear = nullptr;
     return q;
 }
+
 bool isEmpty(Queue *q)
 {
     return q->n == 0;
@@ -77,7 +79,7 @@ void dequeue(Queue *q)
     Menu *m = q->front;
 }
 
-// For receipt and Store Order History
+// For receipt and Store Order History using Linked List
 struct Receipt
 {
     int id;
@@ -293,6 +295,7 @@ string getPassword()
         if (c == '\b')
         {
             pop(stack);
+            // shift to left print space shift back to left
             cout << "\b \b";
         }
         else

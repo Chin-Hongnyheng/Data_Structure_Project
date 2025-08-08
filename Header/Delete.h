@@ -6,6 +6,7 @@
 #ifndef DELETE_h
 #define DELETE_h
 
+// linked list for modify the data inside file io
 struct Delete
 {
     Food food;
@@ -125,7 +126,7 @@ void add_last_id(DeleteList *ls, Food food)
     ls->tail = d;
     ls->n++;
 }
-
+// Input all those data from file into delete linked list and then manipulate those data and store it back to file
 void DeleteInSingleSet()
 {
     ifstream inputfile;

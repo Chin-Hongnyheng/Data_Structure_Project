@@ -424,7 +424,6 @@ int main()
                                             UpdateLoop = false;
                                             system("cls");
                                             break;
-                                        default:
                                             system("cls");
                                             cout << RED << "Incorrect Input" << RESET << endl;
                                             break;

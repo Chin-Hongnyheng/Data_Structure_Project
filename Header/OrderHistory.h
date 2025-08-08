@@ -6,6 +6,7 @@ using namespace std;
 #ifndef Order_h
 #define Order_h
 
+// From Linked List receipt
 void Order(List *ls)
 {
     if (!printed)

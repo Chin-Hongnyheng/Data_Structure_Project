@@ -5,6 +5,7 @@ using namespace std;
 #ifndef RECEIPT_H
 #define RECEIPT_H
 string Name;
+// using Linked List from Design.h
 int ReceiptPaper(List *ls)
 {
     // Global boolean from Design.h
